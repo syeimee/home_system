@@ -1,0 +1,19 @@
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <h1>Home System Dashboard</h1>
+  <%= button_to "ログアウト", logout_path, method: :delete, class: "btn btn-secondary" %>
+</header>
+
+<h2 style="margin-bottom: 16px;">デバイス一覧</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+  <% Settings[:switchbot][:devices].each do |device| %>
+    <div style="background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <h3><%= device[:name] %></h3>
+      <p style="margin: 8px 0; color: #666;">状態: 取得中...</p>
+      <div style="display: flex; gap: 8px;">
+        <%= button_to "ON", device_on_path(device[:id]), method: :post, class: "btn btn-success" %>
+        <%= button_to "OFF", device_off_path(device[:id]), method: :post, class: "btn btn-danger" %>
+      </div>
+    </div>
+  <% end %>
+</div>

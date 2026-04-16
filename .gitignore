@@ -1,0 +1,43 @@
+# Environment variables (secrets)
+.env
+
+# Ruby / Rails
+*.gem
+*.rbc
+/.bundle
+/vendor/bundle
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+
+# Bootsnap cache
+/tmp/cache/bootsnap*
+
+# Puma
+/tmp/pids/*
+
+# Node modules (if any)
+/node_modules
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Docker
+docker-compose.override.yml
+
+# SSL certificates (local)
+/nginx/certs/
+
+# Redis dump
+dump.rdb

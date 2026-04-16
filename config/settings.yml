@@ -1,0 +1,31 @@
+app:
+  allowed_email: "your@example.com"
+  timezone: "Asia/Tokyo"
+  webhook_url: "https://your-name.duckdns.org"
+
+line:
+  group_id: "Cxxxxxxxxxxxxxxxxx"
+
+alexa:
+  message_15: "面接が15分後に始まります。書斎付近では静かにお願いします。"
+  message_5: "面接まであと5分です。静かにお願いします。"
+  devices:
+    - "living-room-echo"
+    - "bedroom-echo"
+
+switchbot:
+  devices:
+    - id: "device-id-1"
+      name: "テープライト"
+      type: "tape_light"
+    - id: "device-id-2"
+      name: "ハブ"
+      type: "hub"
+
+interview:
+  keywords:
+    - "面接"
+    - "interview"
+  notify_before_minutes:
+    - 15
+    - 5

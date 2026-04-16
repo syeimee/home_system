@@ -1,0 +1,39 @@
+plugins:
+  - rubocop-rails
+  - rubocop-minitest
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  Exclude:
+    - "bin/**/*"
+    - "tmp/**/*"
+    - "log/**/*"
+    - "vendor/**/*"
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/BlockLength:
+  Exclude:
+    - "test/**/*"
+    - "config/**/*"
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Naming/VariableNumber:
+  AllowedPatterns:
+    - '_\d+'

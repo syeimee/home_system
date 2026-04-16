@@ -1,0 +1,30 @@
+ENV['RAILS_ENV'] ||= 'test'
+
+# Stub environment variables for tests
+ENV['GOOGLE_CLIENT_ID'] ||= 'test-google-client-id'
+ENV['GOOGLE_CLIENT_SECRET'] ||= 'test-google-client-secret'
+ENV['GOOGLE_REFRESH_TOKEN'] ||= 'test-google-refresh-token'
+ENV['GOOGLE_WEBHOOK_SECRET'] ||= 'test-google-webhook-secret'
+ENV['MS_CLIENT_ID'] ||= 'test-ms-client-id'
+ENV['MS_CLIENT_SECRET'] ||= 'test-ms-client-secret'
+ENV['MS_TENANT_ID'] ||= 'test-ms-tenant-id'
+ENV['MS_REFRESH_TOKEN'] ||= 'test-ms-refresh-token'
+ENV['MS_WEBHOOK_SECRET'] ||= 'test-ms-webhook-secret'
+ENV['LINE_CHANNEL_TOKEN'] ||= 'test-line-channel-token'
+ENV['VOICEMONKEY_TOKEN'] ||= 'test-voicemonkey-token'
+ENV['SWITCHBOT_TOKEN'] ||= 'test-switchbot-token'
+ENV['SWITCHBOT_SECRET'] ||= 'test-switchbot-secret'
+ENV['REDIS_URL'] ||= 'redis://localhost:6379'
+
+require_relative '../config/environment'
+require 'rails/test_help'
+require 'webmock/minitest'
+require 'mocha/minitest'
+
+WebMock.disable_net_connect!
+
+module ActiveSupport
+  class TestCase
+    include ActiveJob::TestHelper
+  end
+end

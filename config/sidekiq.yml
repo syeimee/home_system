@@ -1,0 +1,11 @@
+:concurrency: 3
+:queues:
+  - default
+  - webhooks
+
+:scheduler:
+  :schedule:
+    outlook_polling:
+      every: '10m'
+      class: OutlookPollingJob
+      queue: default
