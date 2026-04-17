@@ -3,8 +3,16 @@ class AlexaAnnounceJob < ApplicationJob
 
   def perform(minutes_before)
     message = Settings[:alexa][:"message_#{minutes_before}"]
-    return unless message
+    unless message
+      Rails.logger.warn "[AlexaAnnounce] No message for #{minutes_before} minutes"
+      return
+    end
 
-    AlexaService.new.announce(message:)
+    Rails.logger.info "[AlexaAnnounce] Announcing: #{message}"
+    response = AlexaService.new.announce(message:)
+    Rails.logger.info "[AlexaAnnounce] Response: #{response.code}"
+  rescue => e
+    Rails.logger.error "[AlexaAnnounce] Error: #{e.class} - #{e.message}"
+    raise
   end
 end

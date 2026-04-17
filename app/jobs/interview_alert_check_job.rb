@@ -5,14 +5,24 @@ class InterviewAlertCheckJob < ApplicationJob
 
   def perform
     events = GoogleCalendarService.new.upcoming_events
+    Rails.logger.info "[InterviewAlertCheck] Found #{events.size} upcoming events"
+
     interview_events = events.select { |e| interview_event?(e) }
+    Rails.logger.info "[InterviewAlertCheck] #{interview_events.size} interview events matched"
 
     interview_events.each do |event|
-      next if already_scheduled?(event)
+      if already_scheduled?(event)
+        Rails.logger.info "[InterviewAlertCheck] Already scheduled: #{event[:subject]}"
+        next
+      end
 
+      Rails.logger.info "[InterviewAlertCheck] Scheduling alerts for: #{event[:subject]} at #{event[:start_time]}"
       schedule_alerts(event)
       mark_scheduled(event)
     end
+  rescue => e
+    Rails.logger.error "[InterviewAlertCheck] Error: #{e.class} - #{e.message}"
+    raise
   end
 
   private
