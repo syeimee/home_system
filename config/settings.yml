@@ -4,7 +4,7 @@ app:
   webhook_url: "https://example.duckdns.org"
 
 line:
-  group_id: "Cxxxxxxxxxxxxxxxxx"
+  group_id: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 alexa:
   message_15: "面接が15分後に始まります。書斎付近では静かにお願いします。"
