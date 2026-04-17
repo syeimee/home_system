@@ -21,10 +21,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "ruby", "-e", "require 'net/http'; Net::HTTP.get(URI('http://localhost:3000/login'))"]
-      interval: 5s
-      timeout: 5s
+      interval: 10s
+      timeout: 10s
       retries: 10
-      start_period: 15s
+      start_period: 30s
     expose:
       - "3000"
 
