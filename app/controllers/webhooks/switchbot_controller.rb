@@ -9,7 +9,7 @@ module Webhooks
       context = data['context']
       if context
         device_id = context['deviceMac']&.delete(':')
-        power = context['powerState']
+        power = context['powerState']&.downcase
 
         if device_id && power
           ActionCable.server.broadcast(
