@@ -10,6 +10,10 @@ class SessionsController < ApplicationController
       return
     end
 
+    # Google refresh token を Redis に保存
+    refresh_token = auth.dig('credentials', 'refresh_token')
+    TokenStore.new.save_google_refresh_token(refresh_token) if refresh_token
+
     session[:user_email] = email
     session[:user_name] = auth.dig('info', 'name')
     redirect_to dashboard_path, notice: 'ログインしました'

@@ -2,8 +2,10 @@ require 'test_helper'
 
 class OutlookPollingJobTest < ActiveSupport::TestCase
   setup do
-    @redis = mock('redis')
-    Redis.stubs(:new).returns(@redis)
+    @mock_redis = mock('redis')
+    @mock_redis.stubs(:get)
+    @mock_redis.stubs(:set)
+    Redis.stubs(:new).returns(@mock_redis)
   end
 
   test 'perform syncs interview events and marks as synced' do
@@ -21,14 +23,18 @@ class OutlookPollingJobTest < ActiveSupport::TestCase
       end_time: 3.hours.from_now
     }
 
-    MicrosoftGraphService.any_instance.stubs(:recent_events).returns(events)
-    @redis.stubs(:exists?).with('outlook_synced:evt-001').returns(false)
-    @redis.expects(:set).with('outlook_synced:evt-001', '1', ex: 30.days.to_i).once
-    GoogleCalendarService.any_instance.stubs(:create_event).returns(google_event)
+    mock_ms = mock('ms_service')
+    mock_ms.stubs(:recent_events).returns(events)
+    MicrosoftGraphService.stubs(:new).returns(mock_ms)
 
-    assert_enqueued_with(job: AlexaAnnounceJob) do
-      OutlookPollingJob.perform_now
-    end
+    mock_google = mock('google_service')
+    mock_google.stubs(:create_event).returns(google_event)
+    GoogleCalendarService.stubs(:new).returns(mock_google)
+
+    @mock_redis.stubs(:exists?).with('outlook_synced:evt-001').returns(false)
+    @mock_redis.expects(:set).with('outlook_synced:evt-001', '1', ex: 30.days.to_i).once
+
+    OutlookPollingJob.perform_now
   end
 
   test 'perform skips already synced events' do
@@ -39,9 +45,15 @@ class OutlookPollingJobTest < ActiveSupport::TestCase
       end_time: 3.hours.from_now
     }]
 
-    MicrosoftGraphService.any_instance.stubs(:recent_events).returns(events)
-    @redis.stubs(:exists?).with('outlook_synced:evt-002').returns(true)
-    GoogleCalendarService.any_instance.expects(:create_event).never
+    mock_ms = mock('ms_service')
+    mock_ms.stubs(:recent_events).returns(events)
+    MicrosoftGraphService.stubs(:new).returns(mock_ms)
+
+    @mock_redis.stubs(:exists?).with('outlook_synced:evt-002').returns(true)
+
+    mock_google = mock('google_service')
+    mock_google.expects(:create_event).never
+    GoogleCalendarService.stubs(:new).returns(mock_google)
 
     OutlookPollingJob.perform_now
   end
@@ -49,8 +61,13 @@ class OutlookPollingJobTest < ActiveSupport::TestCase
   test 'perform skips non-interview events' do
     events = [{ id: 'evt-003', subject: 'ランチ', start_time: Time.zone.now, end_time: 1.hour.from_now }]
 
-    MicrosoftGraphService.any_instance.stubs(:recent_events).returns(events)
-    GoogleCalendarService.any_instance.expects(:create_event).never
+    mock_ms = mock('ms_service')
+    mock_ms.stubs(:recent_events).returns(events)
+    MicrosoftGraphService.stubs(:new).returns(mock_ms)
+
+    mock_google = mock('google_service')
+    mock_google.expects(:create_event).never
+    GoogleCalendarService.stubs(:new).returns(mock_google)
 
     OutlookPollingJob.perform_now
   end

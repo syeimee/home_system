@@ -5,9 +5,6 @@ class AlexaAnnounceJob < ApplicationJob
     message = Settings[:alexa][:"message_#{minutes_before}"]
     return unless message
 
-    voicemonkey = VoicemonkeyService.new
-    Settings[:alexa][:devices].each do |device|
-      voicemonkey.announce(device:, message:)
-    end
+    AlexaService.new.announce(message:)
   end
 end

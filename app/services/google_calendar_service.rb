@@ -31,10 +31,13 @@ class GoogleCalendarService
   private
 
   def google_credentials
+    refresh_token = TokenStore.new.google_refresh_token
+    raise 'Google refresh token not found. Please log in first.' unless refresh_token
+
     Google::Auth::UserRefreshCredentials.new(
       client_id: ENV.fetch('GOOGLE_CLIENT_ID'),
       client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET'),
-      refresh_token: ENV.fetch('GOOGLE_REFRESH_TOKEN'),
+      refresh_token:,
       scope: ['https://www.googleapis.com/auth/calendar']
     )
   end

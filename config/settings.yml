@@ -1,7 +1,7 @@
 app:
   allowed_email: "your@example.com"
   timezone: "Asia/Tokyo"
-  webhook_url: "https://your-name.duckdns.org"
+  webhook_url: "https://example.duckdns.org"
 
 line:
   group_id: "Cxxxxxxxxxxxxxxxxx"

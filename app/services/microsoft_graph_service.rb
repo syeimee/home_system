@@ -52,17 +52,25 @@ class MicrosoftGraphService
   end
 
   def access_token
+    store = TokenStore.new
+    refresh_token = store.ms_refresh_token
+    raise 'Microsoft refresh token not found. Please link your Microsoft account.' unless refresh_token
+
     response = HTTParty.post(
       "https://login.microsoftonline.com/#{ENV.fetch('MS_TENANT_ID')}/oauth2/v2.0/token",
       body: {
         client_id: ENV.fetch('MS_CLIENT_ID'),
         client_secret: ENV.fetch('MS_CLIENT_SECRET'),
-        refresh_token: ENV.fetch('MS_REFRESH_TOKEN'),
+        refresh_token:,
         grant_type: 'refresh_token',
         scope: 'https://graph.microsoft.com/.default'
       }
     )
-    response.parsed_response['access_token']
+
+    data = response.parsed_response
+    # Microsoft はリフレッシュトークンをローテーションすることがある
+    store.save_ms_refresh_token(data['refresh_token']) if data['refresh_token']
+    data['access_token']
   end
 
   def parse_events(response)

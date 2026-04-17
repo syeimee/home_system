@@ -2,8 +2,10 @@ require 'test_helper'
 
 class MicrosoftGraphServiceTest < ActiveSupport::TestCase
   setup do
-    @service = MicrosoftGraphService.new
+    TokenStore.any_instance.stubs(:ms_refresh_token).returns('test-ms-refresh-token')
+    TokenStore.any_instance.stubs(:save_ms_refresh_token)
     stub_token_request
+    @service = MicrosoftGraphService.new
   end
 
   test 'recent_events returns parsed events' do

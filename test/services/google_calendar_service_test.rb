@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class GoogleCalendarServiceTest < ActiveSupport::TestCase
+  setup do
+    TokenStore.any_instance.stubs(:google_refresh_token).returns('test-refresh-token')
+  end
+
   test 'recent_events returns formatted events' do
     mock_event = Struct.new(:id, :summary, :start, :end, keyword_init: true)
     mock_dt = Struct.new(:date_time, :date, keyword_init: true)

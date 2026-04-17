@@ -1,0 +1,9 @@
+{
+  "name": "alexa-announce",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "alexa-remote2": "^8.0.0",
+    "express": "^4.21.0"
+  }
+}

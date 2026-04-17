@@ -33,6 +33,20 @@ services:
         condition: service_healthy
     command: bundle exec sidekiq -C config/sidekiq.yml
 
+  alexa:
+    build: ./alexa
+    restart: unless-stopped
+    environment:
+      ALEXA_PORT: "3100"
+      ALEXA_PROXY_PORT: "3101"
+      AMAZON_HOST: "alexa.amazon.co.jp"
+    ports:
+      - "3101:3101"
+    volumes:
+      - alexa_data:/data
+    expose:
+      - "3100"
+
   nginx:
     image: nginx:alpine
     restart: unless-stopped
@@ -47,3 +61,4 @@ services:
 
 volumes:
   redis_data:
+  alexa_data:
