@@ -151,6 +151,9 @@
 
 <% content_for :navbar do %>
   <nav class="navbar">
+    <button class="navbar-icon-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
+      <i data-lucide="maximize" style="width: 18px; height: 18px;"></i>
+    </button>
     <%= button_to logout_path, method: :delete, class: "navbar-icon-btn", data: { turbo: false } do %>
       <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
     <% end %>
@@ -268,6 +271,39 @@
         card.classList.remove('loading');
       });
     };
+
+    // フルスクリーン
+    window.toggleFullscreen = function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(function() {});
+      } else {
+        document.exitFullscreen();
+      }
+    };
+    document.addEventListener('fullscreenchange', function() {
+      var btn = document.getElementById('fullscreenBtn');
+      var icon = btn.querySelector('i');
+      icon.setAttribute('data-lucide', document.fullscreenElement ? 'minimize' : 'maximize');
+      lucide.createIcons();
+    });
+
+    // 無音再生（Echo Show スリープ防止）
+    (function keepAwake() {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      function playSilence() {
+        var buf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+        var src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        src.start();
+        src.onended = function() { setTimeout(playSilence, 25000); };
+      }
+      document.addEventListener('click', function startAudio() {
+        if (ctx.state === 'suspended') ctx.resume();
+        playSilence();
+        document.removeEventListener('click', startAudio);
+      }, { once: true });
+    })();
 
     // ドロワー
     var drawer = document.getElementById('drawer');
