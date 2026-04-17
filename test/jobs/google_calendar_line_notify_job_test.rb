@@ -15,6 +15,60 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
     GoogleCalendarLineNotifyJob.perform_now
   end
 
+  test 'perform schedules Alexa alerts for interview events' do
+    start_time = 30.minutes.from_now
+    events = [{ subject: 'Technical Interview', start_time: start_time }]
+
+    mock_calendar = mock('google_calendar_service')
+    mock_calendar.stubs(:recent_events).returns(events)
+    GoogleCalendarService.stubs(:new).returns(mock_calendar)
+
+    mock_line = mock('line_service')
+    mock_line.stubs(:notify_event)
+    LineService.stubs(:new).returns(mock_line)
+
+    assert_enqueued_with(job: AlexaAnnounceJob, args: [15]) do
+      assert_enqueued_with(job: AlexaAnnounceJob, args: [5]) do
+        GoogleCalendarLineNotifyJob.perform_now
+      end
+    end
+  end
+
+  test 'perform does not schedule Alexa alerts for non-interview events' do
+    events = [{ subject: '定例ミーティング', start_time: 30.minutes.from_now }]
+
+    mock_calendar = mock('google_calendar_service')
+    mock_calendar.stubs(:recent_events).returns(events)
+    GoogleCalendarService.stubs(:new).returns(mock_calendar)
+
+    mock_line = mock('line_service')
+    mock_line.stubs(:notify_event)
+    LineService.stubs(:new).returns(mock_line)
+
+    assert_no_enqueued_jobs(only: AlexaAnnounceJob) do
+      GoogleCalendarLineNotifyJob.perform_now
+    end
+  end
+
+  test 'perform skips past alert times' do
+    start_time = 3.minutes.from_now
+    events = [{ subject: '面接', start_time: start_time }]
+
+    mock_calendar = mock('google_calendar_service')
+    mock_calendar.stubs(:recent_events).returns(events)
+    GoogleCalendarService.stubs(:new).returns(mock_calendar)
+
+    mock_line = mock('line_service')
+    mock_line.stubs(:notify_event)
+    LineService.stubs(:new).returns(mock_line)
+
+    # 15min before is already past, only 5min should be scheduled (but it's also past if start is 3min away)
+    # Actually 3 minutes from now: 15min before = past, 5min before = past
+    assert_no_enqueued_jobs(only: AlexaAnnounceJob) do
+      GoogleCalendarLineNotifyJob.perform_now
+    end
+  end
+
   test 'perform does nothing when no events' do
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns([])
