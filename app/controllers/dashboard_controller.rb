@@ -23,12 +23,18 @@ class DashboardController < ApplicationController
   end
 
   def device_on
-    SwitchbotService.new.command(params[:id], 'turnOn')
-    redirect_to dashboard_path, status: :see_other
+    service = SwitchbotService.new
+    service.command(params[:id], 'turnOn')
+    sleep 1
+    status = service.device_status(params[:id])
+    render json: { power: status&.dig('power') || 'unknown' }
   end
 
   def device_off
-    SwitchbotService.new.command(params[:id], 'turnOff')
-    redirect_to dashboard_path, status: :see_other
+    service = SwitchbotService.new
+    service.command(params[:id], 'turnOff')
+    sleep 1
+    status = service.device_status(params[:id])
+    render json: { power: status&.dig('power') || 'unknown' }
   end
 end

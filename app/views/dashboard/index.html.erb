@@ -230,31 +230,34 @@
 
     const isOn = card.dataset.state === 'on';
     const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
-    const newState = isOn ? 'off' : 'on';
 
-    // 即座に見た目を切り替え
-    card.dataset.state = newState;
-    const iconWrap = card.querySelector('.device-icon-wrap');
-    iconWrap.classList.remove('on', 'off');
-    iconWrap.classList.add(newState);
-
+    // 即座に見た目を切り替え（楽観的更新）
+    const optimisticState = isOn ? 'off' : 'on';
+    applyState(card, optimisticState);
     card.classList.add('loading');
 
     fetch(url, {
       method: 'POST',
       headers: {
         'X-CSRF-Token': csrfToken,
-        'Accept': 'text/html'
+        'Accept': 'application/json'
       }
-    }).then(() => {
+    }).then(r => r.json()).then(data => {
+      // API から返った実際の状態で確定
+      applyState(card, data.power === 'on' ? 'on' : 'off');
       card.classList.remove('loading');
     }).catch(() => {
       // 失敗したら元に戻す
-      card.dataset.state = isOn ? 'on' : 'off';
-      iconWrap.classList.remove('on', 'off');
-      iconWrap.classList.add(isOn ? 'on' : 'off');
+      applyState(card, isOn ? 'on' : 'off');
       card.classList.remove('loading');
     });
+  }
+
+  function applyState(card, state) {
+    card.dataset.state = state;
+    const iconWrap = card.querySelector('.device-icon-wrap');
+    iconWrap.classList.remove('on', 'off');
+    iconWrap.classList.add(state);
   }
 
   const drawer = document.getElementById('drawer');
