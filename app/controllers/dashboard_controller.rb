@@ -2,6 +2,7 @@ class DashboardController < ApplicationController
   before_action :require_login
 
   def index
+    @artwork = MetArtService.new.current_artwork
     service = SwitchbotService.new
     @devices = service.devices.map do |device|
       status = service.device_status(device['deviceId'])

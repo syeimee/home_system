@@ -2,3 +2,10 @@
 :queues:
   - default
   - webhooks
+
+:scheduler:
+  :schedule:
+    met_art_refresh:
+      every: '1h'
+      class: MetArtRefreshJob
+      queue: default

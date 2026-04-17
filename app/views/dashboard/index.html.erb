@@ -1,4 +1,33 @@
 <style>
+  .bg-artwork {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .bg-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.95) 100%);
+  }
+  .dashboard-wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+
+  .art-credit {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    padding: 8px 0 0;
+    text-align: right;
+  }
+
   .dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -11,9 +40,10 @@
     color: #fff;
   }
   .logout-btn {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #888;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
     padding: 8px 16px;
     border-radius: 10px;
     font-size: 12px;
@@ -22,7 +52,7 @@
     align-items: center;
     gap: 6px;
   }
-  .logout-btn:hover { background: rgba(255,255,255,0.05); }
+  .logout-btn:hover { background: rgba(255,255,255,0.12); }
 
   .device-grid {
     display: grid;
@@ -35,6 +65,8 @@
 
   .device-card {
     background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 20px;
     padding: 20px;
     display: flex;
@@ -43,15 +75,15 @@
     aspect-ratio: 1;
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
-    border: none;
     text-decoration: none;
+    border: none;
   }
   .device-card:hover { background: rgba(255, 255, 255, 0.1); }
   .device-card:active { transform: scale(0.96); }
 
   .device-label {
     font-size: 11px;
-    color: #8e8e93;
+    color: rgba(255,255,255,0.5);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -82,11 +114,11 @@
     background: rgba(255, 255, 255, 0.04);
   }
   .device-icon-wrap.on svg { color: #fff; }
-  .device-icon-wrap.off svg { color: #48484a; }
+  .device-icon-wrap.off svg { color: rgba(255,255,255,0.2); }
 
   .device-name {
     font-size: 12px;
-    color: #8e8e93;
+    color: rgba(255,255,255,0.5);
     margin-top: 8px;
     text-align: center;
   }
@@ -99,61 +131,74 @@
   }
 </style>
 
-<div class="dashboard-header">
-  <h1>リビング</h1>
-  <%= button_to logout_path, method: :delete, class: "logout-btn" do %>
-    <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
-    ログアウト
-  <% end %>
-</div>
+<% if @artwork %>
+  <div class="bg-artwork" style="background-image: url('<%= @artwork[:image_url] %>');"></div>
+<% end %>
+<div class="bg-overlay"></div>
 
-<div class="device-grid">
-  <% @devices.each do |device| %>
-    <% is_on = device[:power] == 'on' %>
-    <% toggle_path = is_on ? device_off_path(device[:id]) : device_on_path(device[:id]) %>
-    <%
-      type = device[:type].to_s.downcase
-      if type.include?('strip') || type.include?('tape')
-        category = '照明'
-        label_icon = 'lightbulb'
-        device_icon = 'sun'
-      elsif type.include?('ceiling')
-        category = '照明'
-        label_icon = 'lamp-ceiling'
-        device_icon = 'lamp-ceiling'
-      elsif type.include?('plug')
-        category = 'プラグ'
-        label_icon = 'plug'
-        device_icon = 'power'
-      elsif type.include?('curtain')
-        category = 'カーテン'
-        label_icon = 'blinds'
-        device_icon = 'blinds'
-      elsif type.include?('hub')
-        category = 'ハブ'
-        label_icon = 'router'
-        device_icon = 'router'
-      else
-        category = 'デバイス'
-        label_icon = 'power'
-        device_icon = 'power'
-      end
-    %>
-    <%= button_to toggle_path, method: :post, class: "toggle-form" do %>
-      <div class="device-card">
-        <div class="device-label">
-          <i data-lucide="<%= label_icon %>" style="width: 12px; height: 12px;"></i>
-          <%= category %>
-        </div>
-
-        <div class="device-icon-area">
-          <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
-            <i data-lucide="<%= device_icon %>" style="width: 42px; height: 42px;"></i>
-          </div>
-        </div>
-
-        <div class="device-name"><%= device[:name] %></div>
-      </div>
+<div class="dashboard-wrap">
+  <div class="dashboard-header">
+    <h1>リビング</h1>
+    <%= button_to logout_path, method: :delete, class: "logout-btn" do %>
+      <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+      ログアウト
     <% end %>
+  </div>
+
+  <div class="device-grid">
+    <% @devices.each do |device| %>
+      <% is_on = device[:power] == 'on' %>
+      <% toggle_path = is_on ? device_off_path(device[:id]) : device_on_path(device[:id]) %>
+      <%
+        type = device[:type].to_s.downcase
+        if type.include?('strip') || type.include?('tape')
+          category = '照明'
+          label_icon = 'lightbulb'
+          device_icon = 'sun'
+        elsif type.include?('ceiling')
+          category = '照明'
+          label_icon = 'lamp-ceiling'
+          device_icon = 'lamp-ceiling'
+        elsif type.include?('plug')
+          category = 'プラグ'
+          label_icon = 'plug'
+          device_icon = 'power'
+        elsif type.include?('curtain')
+          category = 'カーテン'
+          label_icon = 'blinds'
+          device_icon = 'blinds'
+        elsif type.include?('hub')
+          category = 'ハブ'
+          label_icon = 'router'
+          device_icon = 'router'
+        else
+          category = 'デバイス'
+          label_icon = 'power'
+          device_icon = 'power'
+        end
+      %>
+      <%= button_to toggle_path, method: :post, class: "toggle-form" do %>
+        <div class="device-card">
+          <div class="device-label">
+            <i data-lucide="<%= label_icon %>" style="width: 12px; height: 12px;"></i>
+            <%= category %>
+          </div>
+
+          <div class="device-icon-area">
+            <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
+              <i data-lucide="<%= device_icon %>" style="width: 42px; height: 42px;"></i>
+            </div>
+          </div>
+
+          <div class="device-name"><%= device[:name] %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @artwork %>
+    <div class="art-credit">
+      <%= @artwork[:title] %> — <%= @artwork[:artist] %> (<%= @artwork[:date] %>)
+    </div>
   <% end %>
 </div>

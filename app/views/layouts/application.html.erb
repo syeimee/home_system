@@ -23,21 +23,20 @@
       border-radius: 14px;
       margin-bottom: 16px;
       font-size: 13px;
+      backdrop-filter: blur(20px);
     }
-    .alert-notice { background: rgba(40, 167, 69, 0.15); color: #6fcf87; }
-    .alert-alert { background: rgba(220, 53, 69, 0.15); color: #f08090; }
+    .alert-notice { background: rgba(40, 167, 69, 0.2); color: #6fcf87; }
+    .alert-alert { background: rgba(220, 53, 69, 0.2); color: #f08090; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <% if notice %>
-      <div class="alert alert-notice"><%= notice %></div>
-    <% end %>
-    <% if alert %>
-      <div class="alert alert-alert"><%= alert %></div>
-    <% end %>
-    <%= yield %>
-  </div>
+  <% if notice %>
+    <div class="container"><div class="alert alert-notice"><%= notice %></div></div>
+  <% end %>
+  <% if alert %>
+    <div class="container"><div class="alert alert-alert"><%= alert %></div></div>
+  <% end %>
+  <%= yield %>
   <script>lucide.createIcons();</script>
 </body>
 </html>

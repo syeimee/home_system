@@ -7,6 +7,7 @@ gem 'rails', '~> 8.0'
 # Redis / Sidekiq
 gem 'redis', '>= 4.0.1'
 gem 'sidekiq', '~> 7.0'
+gem 'sidekiq-scheduler', '~> 5.0'
 
 # Authentication
 gem 'omniauth-google-oauth2'
