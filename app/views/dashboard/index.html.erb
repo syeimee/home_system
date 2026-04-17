@@ -75,8 +75,8 @@
   .device-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    padding-top: 4px;
+    gap: 12px;
+    padding-top: 8px;
     transition: opacity 0.2s;
   }
   @media (max-width: 480px) {
@@ -87,11 +87,10 @@
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
-    padding: 8px;
+    border-radius: 20px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     aspect-ratio: 1;
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
@@ -101,13 +100,12 @@
   .device-card:active { transform: scale(0.96); }
 
   .device-label {
-    font-size: 10px;
-    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
     display: flex;
     align-items: center;
     gap: 4px;
     font-weight: 500;
-    align-self: flex-start;
   }
 
   .device-icon-area {
@@ -118,27 +116,27 @@
   }
 
   .device-icon-wrap {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
+    width: 75%;
+    aspect-ratio: 1;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .device-icon-wrap.on {
     background: linear-gradient(135deg, #f5a623, #e8890c);
-    box-shadow: 0 4px 16px rgba(245, 166, 35, 0.35);
+    box-shadow: 0 6px 20px rgba(245, 166, 35, 0.4);
   }
   .device-icon-wrap.off {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
   }
   .device-icon-wrap.on svg { color: #fff; }
-  .device-icon-wrap.off svg { color: rgba(255,255,255,0.15); }
+  .device-icon-wrap.off svg { color: rgba(255,255,255,0.2); }
 
   .device-name {
-    font-size: 10px;
-    color: rgba(255,255,255,0.45);
-    margin-top: 4px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
     text-align: center;
   }
 
@@ -212,7 +210,7 @@
 
         <div class="device-icon-area">
           <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
-            <i data-lucide="<%= device_icon %>" style="width: 38px; height: 38px;"></i>
+            <i data-lucide="<%= device_icon %>" style="width: 50%; height: 50%;"></i>
           </div>
         </div>
 
