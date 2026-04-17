@@ -29,6 +29,7 @@ jobs:
             LINE_CHANNEL_TOKEN=${{ secrets.LINE_CHANNEL_TOKEN }}
             SWITCHBOT_TOKEN=${{ secrets.SWITCHBOT_TOKEN }}
             SWITCHBOT_SECRET=${{ secrets.SWITCHBOT_SECRET }}
+            RAILS_SERVE_STATIC_FILES=1
             REDIS_URL=redis://redis:6379
             EOF
 
