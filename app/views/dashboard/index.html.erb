@@ -287,23 +287,38 @@
       lucide.createIcons();
     });
 
-    // 無音再生（Echo Show スリープ防止）
-    (function keepAwake() {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      function playSilence() {
-        var buf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
-        var src = ctx.createBufferSource();
+    // 無音再生（フルスクリーン時のみ、Echo Show スリープ防止）
+    var silenceCtx = null;
+    var silenceTimer = null;
+
+    function startSilence() {
+      if (silenceCtx) return;
+      silenceCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (silenceCtx.state === 'suspended') silenceCtx.resume();
+      function play() {
+        if (!silenceCtx) return;
+        var buf = silenceCtx.createBuffer(1, silenceCtx.sampleRate, silenceCtx.sampleRate);
+        var src = silenceCtx.createBufferSource();
         src.buffer = buf;
-        src.connect(ctx.destination);
+        src.connect(silenceCtx.destination);
         src.start();
-        src.onended = function() { setTimeout(playSilence, 25000); };
+        silenceTimer = setTimeout(play, 25000);
       }
-      document.addEventListener('click', function startAudio() {
-        if (ctx.state === 'suspended') ctx.resume();
-        playSilence();
-        document.removeEventListener('click', startAudio);
-      }, { once: true });
-    })();
+      play();
+    }
+
+    function stopSilence() {
+      if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
+      if (silenceCtx) { silenceCtx.close(); silenceCtx = null; }
+    }
+
+    document.addEventListener('fullscreenchange', function() {
+      if (document.fullscreenElement) {
+        startSilence();
+      } else {
+        stopSilence();
+      }
+    });
 
     // ドロワー
     var drawer = document.getElementById('drawer');
