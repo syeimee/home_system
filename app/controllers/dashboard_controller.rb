@@ -25,7 +25,7 @@ class DashboardController < ApplicationController
   def device_on
     service = SwitchbotService.new
     service.command(params[:id], 'turnOn')
-    sleep 1
+    sleep 3
     status = service.device_status(params[:id])
     render json: { power: status&.dig('power') || 'unknown' }
   end
@@ -33,7 +33,7 @@ class DashboardController < ApplicationController
   def device_off
     service = SwitchbotService.new
     service.command(params[:id], 'turnOff')
-    sleep 1
+    sleep 3
     status = service.device_status(params[:id])
     render json: { power: status&.dig('power') || 'unknown' }
   end

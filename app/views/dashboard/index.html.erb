@@ -231,9 +231,6 @@
     const isOn = card.dataset.state === 'on';
     const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
 
-    // 即座に見た目を切り替え（楽観的更新）
-    const optimisticState = isOn ? 'off' : 'on';
-    applyState(card, optimisticState);
     card.classList.add('loading');
 
     fetch(url, {
@@ -243,21 +240,15 @@
         'Accept': 'application/json'
       }
     }).then(r => r.json()).then(data => {
-      // API から返った実際の状態で確定
-      applyState(card, data.power === 'on' ? 'on' : 'off');
+      const state = data.power === 'on' ? 'on' : 'off';
+      card.dataset.state = state;
+      const iconWrap = card.querySelector('.device-icon-wrap');
+      iconWrap.classList.remove('on', 'off');
+      iconWrap.classList.add(state);
       card.classList.remove('loading');
     }).catch(() => {
-      // 失敗したら元に戻す
-      applyState(card, isOn ? 'on' : 'off');
       card.classList.remove('loading');
     });
-  }
-
-  function applyState(card, state) {
-    card.dataset.state = state;
-    const iconWrap = card.querySelector('.device-icon-wrap');
-    iconWrap.classList.remove('on', 'off');
-    iconWrap.classList.add(state);
   }
 
   const drawer = document.getElementById('drawer');
