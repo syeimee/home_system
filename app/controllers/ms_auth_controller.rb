@@ -14,12 +14,14 @@ class MsAuthController < ApplicationController
   end
 
   def callback
+    Rails.logger.info "MS OAuth callback params: #{request.query_string}"
+
     response = HTTParty.post(
       "https://login.microsoftonline.com/#{ENV.fetch('MS_TENANT_ID')}/oauth2/v2.0/token",
       body: {
         client_id: ENV.fetch('MS_CLIENT_ID'),
         client_secret: ENV.fetch('MS_CLIENT_SECRET'),
-        code: params[:code],
+        code: request.params['code'],
         redirect_uri: ms_redirect_uri,
         grant_type: 'authorization_code',
         scope: 'offline_access Calendars.Read'
