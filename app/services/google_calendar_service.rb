@@ -12,8 +12,8 @@ class GoogleCalendarService
       max_results: 5,
       single_events: true,
       order_by: 'startTime',
-      time_min: 1.minute.ago.iso8601,
-      time_max: Time.current.iso8601
+      time_min: Time.current.beginning_of_day.iso8601,
+      updated_min: 1.minute.ago.iso8601
     )
     response.items.map { |e| format_event(e) }
   end
