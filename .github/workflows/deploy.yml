@@ -25,15 +25,8 @@ jobs:
             SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            GOOGLE_REFRESH_TOKEN=${{ secrets.GOOGLE_REFRESH_TOKEN }}
             GOOGLE_WEBHOOK_SECRET=${{ secrets.GOOGLE_WEBHOOK_SECRET }}
-            MS_CLIENT_ID=${{ secrets.MS_CLIENT_ID }}
-            MS_CLIENT_SECRET=${{ secrets.MS_CLIENT_SECRET }}
-            MS_TENANT_ID=${{ secrets.MS_TENANT_ID }}
-            MS_REFRESH_TOKEN=${{ secrets.MS_REFRESH_TOKEN }}
-            MS_WEBHOOK_SECRET=${{ secrets.MS_WEBHOOK_SECRET }}
             LINE_CHANNEL_TOKEN=${{ secrets.LINE_CHANNEL_TOKEN }}
-            VOICEMONKEY_TOKEN=${{ secrets.VOICEMONKEY_TOKEN }}
             SWITCHBOT_TOKEN=${{ secrets.SWITCHBOT_TOKEN }}
             SWITCHBOT_SECRET=${{ secrets.SWITCHBOT_SECRET }}
             REDIS_URL=redis://redis:6379
@@ -41,5 +34,5 @@ jobs:
 
             git pull origin main
             docker compose build --no-cache
-            docker compose up -d
+            docker compose up -d --force-recreate
             docker image prune -f
