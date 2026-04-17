@@ -4,7 +4,10 @@ module Webhooks
 
     def create
       body = request.body.read
-      events = JSON.parse(body)['events'] || []
+      return head :ok if body.blank?
+
+      parsed = JSON.parse(body) rescue {}
+      events = parsed['events'] || []
 
       events.each do |event|
         source = event['source'] || {}
