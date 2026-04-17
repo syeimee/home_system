@@ -54,7 +54,11 @@
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     color: rgba(255,255,255,0.7);
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 20px;
   }
   .calendar-panel::-webkit-scrollbar { display: none; }
   .calendar-day-label {

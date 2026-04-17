@@ -48,7 +48,7 @@ class DashboardController < ApplicationController
       max_results: 20,
       single_events: true,
       order_by: 'startTime',
-      time_min: Time.current.in_time_zone.beginning_of_day.iso8601,
+      time_min: Time.current.iso8601,
       time_max: tomorrow_end.iso8601
     )
     response.items.map do |e|
