@@ -204,7 +204,7 @@
           device_icon = 'power'
         end
       %>
-      <div class="device-card" data-toggle-url="<%= toggle_path %>" onclick="toggleDevice(this)">
+      <div class="device-card" data-on-url="<%= device_on_path(device[:id]) %>" data-off-url="<%= device_off_path(device[:id]) %>" data-state="<%= is_on ? 'on' : 'off' %>" onclick="toggleDevice(this)">
         <div class="device-label">
           <i data-lucide="<%= label_icon %>" style="width: 10px; height: 10px;"></i>
           <%= category %>
@@ -226,15 +226,34 @@
   const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
   function toggleDevice(card) {
+    if (card.classList.contains('loading')) return;
+
+    const isOn = card.dataset.state === 'on';
+    const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
+    const newState = isOn ? 'off' : 'on';
+
+    // 即座に見た目を切り替え
+    card.dataset.state = newState;
+    const iconWrap = card.querySelector('.device-icon-wrap');
+    iconWrap.classList.remove('on', 'off');
+    iconWrap.classList.add(newState);
+
     card.classList.add('loading');
-    fetch(card.dataset.toggleUrl, {
+
+    fetch(url, {
       method: 'POST',
       headers: {
         'X-CSRF-Token': csrfToken,
         'Accept': 'text/html'
       }
     }).then(() => {
-      window.location.reload();
+      card.classList.remove('loading');
+    }).catch(() => {
+      // 失敗したら元に戻す
+      card.dataset.state = isOn ? 'on' : 'off';
+      iconWrap.classList.remove('on', 'off');
+      iconWrap.classList.add(isOn ? 'on' : 'off');
+      card.classList.remove('loading');
     });
   }
 
