@@ -88,7 +88,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
-    padding: 10px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -212,7 +212,7 @@
 
         <div class="device-icon-area">
           <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
-            <i data-lucide="<%= device_icon %>" style="width: 32px; height: 32px;"></i>
+            <i data-lucide="<%= device_icon %>" style="width: 38px; height: 38px;"></i>
           </div>
         </div>
 
@@ -222,81 +222,78 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/@rails/actioncable@7.2.2/app/assets/javascripts/actioncable.esm.js" type="module"></script>
-<script type="module">
-  import * as ActionCable from 'https://unpkg.com/@rails/actioncable@7.2.2/app/assets/javascripts/actioncable.esm.js';
+<script src="https://unpkg.com/@rails/actioncable@7.2.2/app/assets/javascripts/actioncable.js"></script>
+<script>
+  (function() {
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    // WebSocket 接続
+    var cable = ActionCable.createConsumer('/cable');
+    cable.subscriptions.create('DeviceStatusChannel', {
+      received: function(data) {
+        var card = document.querySelector('[data-device-id="' + data.deviceId + '"]');
+        if (!card) return;
 
-  // WebSocket 接続
-  const cable = ActionCable.createConsumer('/cable');
-  cable.subscriptions.create('DeviceStatusChannel', {
-    received(data) {
-      const card = document.querySelector(`[data-device-id="${data.deviceId}"]`);
-      if (!card) return;
-
-      const state = data.power === 'on' ? 'on' : 'off';
-      card.dataset.state = state;
-      const iconWrap = card.querySelector('.device-icon-wrap');
-      iconWrap.classList.remove('on', 'off');
-      iconWrap.classList.add(state);
-      card.classList.remove('loading');
-    }
-  });
-
-  // カードタップでコマンド送信（楽観的更新）
-  window.toggleDevice = function(card) {
-    if (card.classList.contains('loading')) return;
-
-    const isOn = card.dataset.state === 'on';
-    const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
-    const newState = isOn ? 'off' : 'on';
-
-    // 楽観的更新
-    card.dataset.state = newState;
-    const iconWrap = card.querySelector('.device-icon-wrap');
-    iconWrap.classList.remove('on', 'off');
-    iconWrap.classList.add(newState);
-    card.classList.add('loading');
-
-    fetch(url, {
-      method: 'POST',
-      headers: { 'X-CSRF-Token': csrfToken, 'Accept': 'application/json' }
-    }).catch(() => {
-      // 失敗したら戻す
-      card.dataset.state = isOn ? 'on' : 'off';
-      iconWrap.classList.remove('on', 'off');
-      iconWrap.classList.add(isOn ? 'on' : 'off');
-      card.classList.remove('loading');
+        var state = data.power === 'on' ? 'on' : 'off';
+        card.dataset.state = state;
+        var iconWrap = card.querySelector('.device-icon-wrap');
+        iconWrap.classList.remove('on', 'off');
+        iconWrap.classList.add(state);
+        card.classList.remove('loading');
+      }
     });
-    // 成功時はWebhook → ActionCable で実際の状態が来る
-  };
 
-  // ドロワー
-  const drawer = document.getElementById('drawer');
-  const handle = document.getElementById('drawerHandle');
+    // カードタップでコマンド送信（楽観的更新）
+    window.toggleDevice = function(card) {
+      if (card.classList.contains('loading')) return;
 
-  handle.addEventListener('click', () => {
-    drawer.classList.toggle('collapsed');
-  });
+      var isOn = card.dataset.state === 'on';
+      var url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
+      var newState = isOn ? 'off' : 'on';
 
-  let startY = 0;
-  let dragging = false;
+      card.dataset.state = newState;
+      var iconWrap = card.querySelector('.device-icon-wrap');
+      iconWrap.classList.remove('on', 'off');
+      iconWrap.classList.add(newState);
+      card.classList.add('loading');
 
-  drawer.addEventListener('touchstart', (e) => {
-    if (e.target.closest('.device-card')) return;
-    startY = e.touches[0].clientY;
-    dragging = true;
-  });
+      fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRF-Token': csrfToken, 'Accept': 'application/json' }
+      }).catch(function() {
+        card.dataset.state = isOn ? 'on' : 'off';
+        iconWrap.classList.remove('on', 'off');
+        iconWrap.classList.add(isOn ? 'on' : 'off');
+        card.classList.remove('loading');
+      });
+    };
 
-  drawer.addEventListener('touchend', (e) => {
-    if (!dragging) return;
-    dragging = false;
-    const diff = e.changedTouches[0].clientY - startY;
-    if (diff > 60) {
-      drawer.classList.add('collapsed');
-    } else if (diff < -60) {
-      drawer.classList.remove('collapsed');
-    }
-  });
+    // ドロワー
+    var drawer = document.getElementById('drawer');
+    var handle = document.getElementById('drawerHandle');
+
+    handle.addEventListener('click', function() {
+      drawer.classList.toggle('collapsed');
+    });
+
+    var startY = 0;
+    var dragging = false;
+
+    drawer.addEventListener('touchstart', function(e) {
+      if (e.target.closest('.device-card')) return;
+      startY = e.touches[0].clientY;
+      dragging = true;
+    });
+
+    drawer.addEventListener('touchend', function(e) {
+      if (!dragging) return;
+      dragging = false;
+      var diff = e.changedTouches[0].clientY - startY;
+      if (diff > 60) {
+        drawer.classList.add('collapsed');
+      } else if (diff < -60) {
+        drawer.classList.remove('collapsed');
+      }
+    });
+  })();
 </script>
