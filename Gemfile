@@ -5,6 +5,7 @@ gem 'puma', '>= 5.0'
 gem 'rails', '~> 8.0'
 
 # Redis / Sidekiq
+gem 'connection_pool', '~> 2.4'
 gem 'redis', '>= 4.0.1'
 gem 'sidekiq', '~> 7.0'
 gem 'sidekiq-scheduler', '~> 5.0'
