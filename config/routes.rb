@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   namespace :webhooks do
     post 'google', to: 'google#create'
     post 'switchbot', to: 'switchbot#create'
+    post 'line', to: 'line#create'
   end
 
   # Test-only route for simulating login
