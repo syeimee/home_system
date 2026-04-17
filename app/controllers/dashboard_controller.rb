@@ -24,11 +24,11 @@ class DashboardController < ApplicationController
 
   def device_on
     SwitchbotService.new.command(params[:id], 'turnOn')
-    redirect_to dashboard_path, notice: 'デバイスをONにしました'
+    redirect_to dashboard_path, status: :see_other
   end
 
   def device_off
     SwitchbotService.new.command(params[:id], 'turnOff')
-    redirect_to dashboard_path, notice: 'デバイスをOFFにしました'
+    redirect_to dashboard_path, status: :see_other
   end
 end
