@@ -9,3 +9,7 @@
       every: '1h'
       class: MetArtRefreshJob
       queue: default
+    interview_alert_check:
+      every: '15m'
+      class: InterviewAlertCheckJob
+      queue: default
