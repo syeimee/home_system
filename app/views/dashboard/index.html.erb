@@ -1,34 +1,142 @@
-<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08);">
-  <div>
-    <p style="font-size: 12px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;">Home System</p>
-    <h1 style="font-size: 28px; font-weight: 700; color: #fff;">Dashboard</h1>
-  </div>
-  <%= button_to "ログアウト", logout_path, method: :delete, class: "btn btn-secondary", style: "font-size: 12px; padding: 8px 16px;" %>
-</header>
+<style>
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0 24px;
+  }
+  .dashboard-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #888;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.05); }
 
-<h2 style="font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 20px;">デバイス一覧</h2>
+  .device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  @media (min-width: 600px) {
+    .device-grid { grid-template-columns: repeat(4, 1fr); }
+  }
 
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;">
+  .device-card {
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .device-card:hover { background: #2c2c2e; }
+
+  .device-label {
+    font-size: 11px;
+    color: #8e8e93;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .device-label .icon { font-size: 10px; }
+
+  .device-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto auto 8px 0;
+  }
+  .device-icon-wrap.on {
+    background: linear-gradient(135deg, #f5a623, #f7931e);
+  }
+  .device-icon-wrap.off {
+    background: #2c2c2e;
+  }
+  .device-icon {
+    font-size: 28px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  }
+
+  .device-status {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: auto;
+  }
+  .device-name {
+    font-size: 12px;
+    color: #8e8e93;
+    margin-top: 2px;
+  }
+
+  .device-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .device-actions form { flex: 1; display: flex; }
+  .device-actions button {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .device-actions button:hover { opacity: 0.8; }
+  .btn-on {
+    background: linear-gradient(135deg, #f5a623, #f7931e);
+    color: #fff;
+  }
+  .btn-off {
+    background: rgba(255,255,255,0.08);
+    color: #8e8e93;
+  }
+</style>
+
+<div class="dashboard-header">
+  <h1>リビング</h1>
+  <%= button_to "ログアウト", logout_path, method: :delete, class: "logout-btn" %>
+</div>
+
+<div class="device-grid">
   <% @devices.each do |device| %>
-    <div style="background: rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; border: 1px solid rgba(255,255,255,0.08); transition: background 0.2s;">
-      <div style="margin-bottom: 16px;">
-        <% is_on = device[:power] == 'on' %>
-        <div style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px;
-          background: <%= is_on ? 'linear-gradient(135deg, #f39c12, #e67e22)' : 'rgba(255,255,255,0.08)' %>;">
-          <% if device[:type]&.include?('Light') || device[:type]&.include?('light') %>
-            <%= is_on ? '☀' : '☀' %>
-          <% else %>
-            <%= is_on ? '⚡' : '⚡' %>
-          <% end %>
-        </div>
-        <p style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px;"><%= device[:name] %></p>
-        <p style="font-size: 13px; color: <%= is_on ? '#f39c12' : '#666' %>; font-weight: 600;">
-          <%= is_on ? 'ON' : device[:power] == 'off' ? 'OFF' : device[:power] %>
-        </p>
+    <% is_on = device[:power] == 'on' %>
+    <% is_light = device[:type].to_s.downcase.include?('light') %>
+    <div class="device-card">
+      <div class="device-label">
+        <span class="icon"><%= is_light ? '💡' : '⚡' %></span>
+        <%= is_light ? '照明' : 'デバイス' %>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <%= button_to "ON", device_on_path(device[:id]), method: :post, class: "btn btn-success", style: "flex: 1; padding: 8px; font-size: 13px; border-radius: 10px;" %>
-        <%= button_to "OFF", device_off_path(device[:id]), method: :post, class: "btn btn-danger", style: "flex: 1; padding: 8px; font-size: 13px; border-radius: 10px; background: rgba(231,76,60,0.3); color: #e74c3c;" %>
+
+      <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
+        <span class="device-icon"><%= is_on ? '☀' : '☀' %></span>
+      </div>
+
+      <div class="device-status"><%= is_on ? 'ON' : 'OFF' %></div>
+      <div class="device-name"><%= device[:name] %></div>
+
+      <div class="device-actions">
+        <%= button_to "ON", device_on_path(device[:id]), method: :post, class: "btn-on" %>
+        <%= button_to "OFF", device_off_path(device[:id]), method: :post, class: "btn-off" %>
       </div>
     </div>
   <% end %>
