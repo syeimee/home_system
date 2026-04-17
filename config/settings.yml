@@ -13,14 +13,7 @@ alexa:
     - "living-room-echo"
     - "bedroom-echo"
 
-switchbot:
-  devices:
-    - id: "XXXXXXXXXXXX"
-      name: "デスクライト"
-      type: "strip_light"
-    - id: "XXXXXXXXXXXX"
-      name: "リビングのライト"
-      type: "ceiling_light_pro"
+switchbot: {}
 
 interview:
   keywords:
