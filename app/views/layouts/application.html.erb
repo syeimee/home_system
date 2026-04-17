@@ -17,11 +17,50 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .navbar-brand {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .navbar-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: rgba(255,255,255,0.6);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .navbar-btn:hover { background: rgba(255,255,255,0.15); }
+
     .alert {
-      padding: 12px 16px;
-      border-radius: 14px;
-      margin-bottom: 16px;
+      position: fixed;
+      top: 52px;
+      left: 16px; right: 16px;
+      z-index: 21;
+      padding: 10px 16px;
+      border-radius: 12px;
       font-size: 13px;
       backdrop-filter: blur(20px);
     }
@@ -30,11 +69,14 @@
   </style>
 </head>
 <body>
+  <% if content_for?(:navbar) %>
+    <%= yield(:navbar) %>
+  <% end %>
   <% if notice %>
-    <div class="container"><div class="alert alert-notice"><%= notice %></div></div>
+    <div class="alert alert-notice"><%= notice %></div>
   <% end %>
   <% if alert %>
-    <div class="container"><div class="alert alert-alert"><%= alert %></div></div>
+    <div class="alert alert-alert"><%= alert %></div>
   <% end %>
   <%= yield %>
   <script>lucide.createIcons();</script>
