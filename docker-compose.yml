@@ -46,6 +46,7 @@ services:
       ALEXA_PORT: "3100"
       ALEXA_PROXY_PORT: "3101"
       AMAZON_HOST: "alexa.amazon.co.jp"
+      PROXY_OWN_IP: "xxx.xxx.xxx.xxx"
     ports:
       - "3101:3101"
     volumes:

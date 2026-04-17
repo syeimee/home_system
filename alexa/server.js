@@ -17,7 +17,7 @@ function initAlexa() {
 
   const options = {
     proxyOnly: true,
-    proxyOwnIp: '0.0.0.0',
+    proxyOwnIp: process.env.PROXY_OWN_IP || '0.0.0.0',
     proxyPort: PROXY_PORT,
     alexaServiceHost: AMAZON_HOST,
     cookieJustRecreate: false,
