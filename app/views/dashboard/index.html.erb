@@ -7,59 +7,90 @@
     background-position: center;
     background-repeat: no-repeat;
   }
-  .bg-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.35);
-  }
-  .dashboard-wrap {
-    position: relative;
-    z-index: 2;
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 20px 16px;
-  }
 
   .art-credit {
     position: fixed;
-    bottom: 12px;
-    right: 16px;
-    font-size: 10px;
-    color: rgba(255,255,255,0.3);
-    z-index: 3;
+    top: 16px;
+    left: 20px;
+    z-index: 1;
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .art-credit .art-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .drawer {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 20px 20px 0 0;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 0 20px 24px;
+  }
+  .drawer.collapsed {
+    transform: translateY(calc(100% - 60px));
+  }
+
+  .drawer-handle-area {
+    position: sticky;
+    top: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    padding: 12px 0 16px;
+    cursor: pointer;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .drawer-handle {
+    width: 36px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    margin-bottom: 16px;
   }
 
   .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0 24px;
+    width: 100%;
   }
   .dashboard-header h1 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
     color: #fff;
   }
   .logout-btn {
     background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.6);
-    padding: 8px 16px;
+    color: rgba(255,255,255,0.5);
+    padding: 6px 14px;
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
   .logout-btn:hover { background: rgba(255,255,255,0.12); }
 
   .device-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
+    padding-top: 8px;
   }
   @media (min-width: 600px) {
     .device-grid { grid-template-columns: repeat(4, 1fr); }
@@ -67,10 +98,9 @@
 
   .device-card {
     background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -78,17 +108,16 @@
     cursor: pointer;
     transition: background 0.15s, transform 0.1s;
     text-decoration: none;
-    border: none;
   }
   .device-card:hover { background: rgba(255, 255, 255, 0.1); }
   .device-card:active { transform: scale(0.96); }
 
   .device-label {
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     font-weight: 500;
     align-self: flex-start;
   }
@@ -101,27 +130,27 @@
   }
 
   .device-icon-wrap {
-    width: 88px;
-    height: 88px;
-    border-radius: 22px;
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .device-icon-wrap.on {
     background: linear-gradient(135deg, #f5a623, #e8890c);
-    box-shadow: 0 6px 24px rgba(245, 166, 35, 0.4);
+    box-shadow: 0 6px 24px rgba(245, 166, 35, 0.35);
   }
   .device-icon-wrap.off {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
   }
   .device-icon-wrap.on svg { color: #fff; }
-  .device-icon-wrap.off svg { color: rgba(255,255,255,0.2); }
+  .device-icon-wrap.off svg { color: rgba(255,255,255,0.15); }
 
   .device-name {
-    font-size: 12px;
-    color: rgba(255,255,255,0.5);
-    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 6px;
     text-align: center;
   }
 
@@ -135,16 +164,22 @@
 
 <% if @artwork %>
   <div class="bg-artwork" style="background-image: url('<%= @artwork[:image_url] %>');"></div>
+  <div class="art-credit">
+    <div class="art-title"><%= @artwork[:title] %></div>
+    <div><%= @artwork[:artist] %><%= " (#{@artwork[:date]})" if @artwork[:date].present? %></div>
+  </div>
 <% end %>
-<div class="bg-overlay"></div>
 
-<div class="dashboard-wrap">
-  <div class="dashboard-header">
-    <h1>リビング</h1>
-    <%= button_to logout_path, method: :delete, class: "logout-btn" do %>
-      <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
-      ログアウト
-    <% end %>
+<div class="drawer" id="drawer">
+  <div class="drawer-handle-area" id="drawerHandle">
+    <div class="drawer-handle"></div>
+    <div class="dashboard-header">
+      <h1>リビング</h1>
+      <%= button_to logout_path, method: :delete, class: "logout-btn" do %>
+        <i data-lucide="log-out" style="width: 12px; height: 12px;"></i>
+        ログアウト
+      <% end %>
+    </div>
   </div>
 
   <div class="device-grid">
@@ -182,13 +217,13 @@
       <%= button_to toggle_path, method: :post, class: "toggle-form" do %>
         <div class="device-card">
           <div class="device-label">
-            <i data-lucide="<%= label_icon %>" style="width: 12px; height: 12px;"></i>
+            <i data-lucide="<%= label_icon %>" style="width: 11px; height: 11px;"></i>
             <%= category %>
           </div>
 
           <div class="device-icon-area">
             <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
-              <i data-lucide="<%= device_icon %>" style="width: 42px; height: 42px;"></i>
+              <i data-lucide="<%= device_icon %>" style="width: 38px; height: 38px;"></i>
             </div>
           </div>
 
@@ -197,10 +232,33 @@
       <% end %>
     <% end %>
   </div>
-
-  <% if @artwork %>
-    <div class="art-credit">
-      <%= @artwork[:title] %> — <%= @artwork[:artist] %> (<%= @artwork[:date] %>)
-    </div>
-  <% end %>
 </div>
+
+<script>
+  const drawer = document.getElementById('drawer');
+  const handle = document.getElementById('drawerHandle');
+
+  handle.addEventListener('click', () => {
+    drawer.classList.toggle('collapsed');
+  });
+
+  let startY = 0;
+  let dragging = false;
+
+  drawer.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.toggle-form')) return;
+    startY = e.touches[0].clientY;
+    dragging = true;
+  });
+
+  drawer.addEventListener('touchend', (e) => {
+    if (!dragging) return;
+    dragging = false;
+    const diff = e.changedTouches[0].clientY - startY;
+    if (diff > 60) {
+      drawer.classList.add('collapsed');
+    } else if (diff < -60) {
+      drawer.classList.remove('collapsed');
+    }
+  });
+</script>
