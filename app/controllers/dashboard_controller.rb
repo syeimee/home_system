@@ -2,7 +2,12 @@ class DashboardController < ApplicationController
   before_action :require_login
 
   def index
-    @devices = Settings[:switchbot][:devices]
+    @devices = Settings[:switchbot][:devices].map do |device|
+      status = SwitchbotService.new.device_status(device[:id])
+      device.merge(power: status&.dig('power') || 'unknown')
+    rescue StandardError
+      device.merge(power: 'error')
+    end
   end
 
   def device_on
