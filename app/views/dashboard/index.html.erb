@@ -214,6 +214,8 @@
 
   .toggle-form { display: none !important; }
 
+  .calendar-panel.hidden { display: none; }
+
   .device-card.loading {
     opacity: 0.5;
     pointer-events: none;
@@ -222,6 +224,9 @@
 
 <% content_for :navbar do %>
   <nav class="navbar">
+    <button class="navbar-icon-btn" onclick="toggleCalendar()" id="calendarBtn">
+      <i data-lucide="calendar" style="width: 18px; height: 18px;"></i>
+    </button>
     <button class="navbar-icon-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
       <i data-lucide="maximize" style="width: 18px; height: 18px;"></i>
     </button>
@@ -378,6 +383,12 @@
         iconWrap.classList.add(isOn ? 'on' : 'off');
         card.classList.remove('loading');
       });
+    };
+
+    // カレンダー表示切替
+    window.toggleCalendar = function() {
+      var panel = document.querySelector('.calendar-panel');
+      if (panel) panel.classList.toggle('hidden');
     };
 
     // フルスクリーン
