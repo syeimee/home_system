@@ -22,6 +22,30 @@ class SwitchbotService
     )
   end
 
+  def setup_webhook(url)
+    HTTParty.post(
+      "#{BASE_URL}/webhook/setupWebhook",
+      headers: auth_headers.merge('Content-Type' => 'application/json'),
+      body: { action: 'setupWebhook', url:, deviceList: 'ALL' }.to_json
+    )
+  end
+
+  def query_webhook
+    HTTParty.post(
+      "#{BASE_URL}/webhook/queryWebhook",
+      headers: auth_headers.merge('Content-Type' => 'application/json'),
+      body: { action: 'queryUrl' }.to_json
+    )
+  end
+
+  def delete_webhook(url)
+    HTTParty.post(
+      "#{BASE_URL}/webhook/deleteWebhook",
+      headers: auth_headers.merge('Content-Type' => 'application/json'),
+      body: { action: 'deleteWebhook', url: }.to_json
+    )
+  end
+
   private
 
   def auth_headers

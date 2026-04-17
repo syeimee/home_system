@@ -21,20 +21,22 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to login_path
   end
 
-  test 'POST device_on calls SwitchbotService and redirects' do
+  test 'POST device_on calls SwitchbotService and returns JSON' do
     login_as_allowed_user
     SwitchbotService.any_instance.expects(:command).with('device-id-1', 'turnOn').once
     post device_on_path('device-id-1')
 
-    assert_redirected_to dashboard_path
+    assert_response :success
+    assert_equal 'ok', response.parsed_body['status']
   end
 
-  test 'POST device_off calls SwitchbotService and redirects' do
+  test 'POST device_off calls SwitchbotService and returns JSON' do
     login_as_allowed_user
     SwitchbotService.any_instance.expects(:command).with('device-id-1', 'turnOff').once
     post device_off_path('device-id-1')
 
-    assert_redirected_to dashboard_path
+    assert_response :success
+    assert_equal 'ok', response.parsed_body['status']
   end
 
   private

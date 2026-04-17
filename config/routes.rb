@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+
   # Authentication
   get 'login', to: 'sessions#new'
   get 'auth/google_oauth2/callback', to: 'sessions#create'
@@ -13,6 +15,7 @@ Rails.application.routes.draw do
   # Webhooks
   namespace :webhooks do
     post 'google', to: 'google#create'
+    post 'switchbot', to: 'switchbot#create'
   end
 
   # Test-only route for simulating login

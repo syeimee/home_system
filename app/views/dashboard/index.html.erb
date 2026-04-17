@@ -204,7 +204,7 @@
           device_icon = 'power'
         end
       %>
-      <div class="device-card" data-on-url="<%= device_on_path(device[:id]) %>" data-off-url="<%= device_off_path(device[:id]) %>" data-state="<%= is_on ? 'on' : 'off' %>" onclick="toggleDevice(this)">
+      <div class="device-card" data-device-id="<%= device[:id] %>" data-on-url="<%= device_on_path(device[:id]) %>" data-off-url="<%= device_off_path(device[:id]) %>" data-state="<%= is_on ? 'on' : 'off' %>" onclick="toggleDevice(this)">
         <div class="device-label">
           <i data-lucide="<%= label_icon %>" style="width: 10px; height: 10px;"></i>
           <%= category %>
@@ -222,35 +222,57 @@
   </div>
 </div>
 
-<script>
+<script src="https://unpkg.com/@rails/actioncable@7.2.2/app/assets/javascripts/actioncable.esm.js" type="module"></script>
+<script type="module">
+  import * as ActionCable from 'https://unpkg.com/@rails/actioncable@7.2.2/app/assets/javascripts/actioncable.esm.js';
+
   const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-  function toggleDevice(card) {
-    if (card.classList.contains('loading')) return;
+  // WebSocket 接続
+  const cable = ActionCable.createConsumer('/cable');
+  cable.subscriptions.create('DeviceStatusChannel', {
+    received(data) {
+      const card = document.querySelector(`[data-device-id="${data.deviceId}"]`);
+      if (!card) return;
 
-    const isOn = card.dataset.state === 'on';
-    const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
-
-    card.classList.add('loading');
-
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'X-CSRF-Token': csrfToken,
-        'Accept': 'application/json'
-      }
-    }).then(r => r.json()).then(data => {
       const state = data.power === 'on' ? 'on' : 'off';
       card.dataset.state = state;
       const iconWrap = card.querySelector('.device-icon-wrap');
       iconWrap.classList.remove('on', 'off');
       iconWrap.classList.add(state);
       card.classList.remove('loading');
+    }
+  });
+
+  // カードタップでコマンド送信（楽観的更新）
+  window.toggleDevice = function(card) {
+    if (card.classList.contains('loading')) return;
+
+    const isOn = card.dataset.state === 'on';
+    const url = isOn ? card.dataset.offUrl : card.dataset.onUrl;
+    const newState = isOn ? 'off' : 'on';
+
+    // 楽観的更新
+    card.dataset.state = newState;
+    const iconWrap = card.querySelector('.device-icon-wrap');
+    iconWrap.classList.remove('on', 'off');
+    iconWrap.classList.add(newState);
+    card.classList.add('loading');
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRF-Token': csrfToken, 'Accept': 'application/json' }
     }).catch(() => {
+      // 失敗したら戻す
+      card.dataset.state = isOn ? 'on' : 'off';
+      iconWrap.classList.remove('on', 'off');
+      iconWrap.classList.add(isOn ? 'on' : 'off');
       card.classList.remove('loading');
     });
-  }
+    // 成功時はWebhook → ActionCable で実際の状態が来る
+  };
 
+  // ドロワー
   const drawer = document.getElementById('drawer');
   const handle = document.getElementById('drawerHandle');
 
