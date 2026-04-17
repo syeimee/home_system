@@ -41,4 +41,4 @@ docker-compose.override.yml
 
 # Redis dump
 dump.rdb
-docs/image.png
+docs/*
