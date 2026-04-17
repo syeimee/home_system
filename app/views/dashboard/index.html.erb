@@ -288,28 +288,26 @@
     });
 
     // 無音再生（フルスクリーン時のみ、Echo Show スリープ防止）
-    var silenceCtx = null;
-    var silenceTimer = null;
+    var silenceAudio = null;
+    var wakeLock = null;
 
     function startSilence() {
-      if (silenceCtx) return;
-      silenceCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (silenceCtx.state === 'suspended') silenceCtx.resume();
-      function play() {
-        if (!silenceCtx) return;
-        var buf = silenceCtx.createBuffer(1, silenceCtx.sampleRate, silenceCtx.sampleRate);
-        var src = silenceCtx.createBufferSource();
-        src.buffer = buf;
-        src.connect(silenceCtx.destination);
-        src.start();
-        silenceTimer = setTimeout(play, 25000);
+      if (!silenceAudio) {
+        silenceAudio = new Audio('/silence.mp3');
+        silenceAudio.loop = true;
+        silenceAudio.volume = 0.01;
       }
-      play();
+      silenceAudio.play().catch(function() {});
+      if (navigator.wakeLock) {
+        navigator.wakeLock.request('screen').then(function(lock) {
+          wakeLock = lock;
+        }).catch(function() {});
+      }
     }
 
     function stopSilence() {
-      if (silenceTimer) { clearTimeout(silenceTimer); silenceTimer = null; }
-      if (silenceCtx) { silenceCtx.close(); silenceCtx = null; }
+      if (silenceAudio) { silenceAudio.pause(); }
+      if (wakeLock) { wakeLock.release(); wakeLock = null; }
     }
 
     document.addEventListener('fullscreenchange', function() {

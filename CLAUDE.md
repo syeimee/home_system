@@ -69,6 +69,27 @@ Settings[:switchbot][:devices]
 - DBを導入しない（Redisのみ使用）
 - 秘密情報をコードにハードコードしない
 
+## テスト・Lint 実行方法
+
+Redisが必要なため Docker 経由で実行する。
+
+```bash
+# Redis起動
+docker compose up -d redis
+
+# テスト実行
+docker run --rm -v "$(pwd)":/app -w /app --network home_system_default \
+  -e REDIS_URL=redis://redis:6379 ruby:3.3-slim bash -c \
+  "apt-get update -qq && apt-get install -y --no-install-recommends build-essential libyaml-dev pkg-config > /dev/null 2>&1 && bundle install --quiet && bundle exec rails test"
+
+# RuboCop実行
+docker run --rm -v "$(pwd)":/app -w /app ruby:3.3-slim bash -c \
+  "apt-get update -qq && apt-get install -y --no-install-recommends build-essential libyaml-dev pkg-config > /dev/null 2>&1 && bundle install --quiet && bundle exec rubocop"
+
+# Redis停止
+docker compose down
+```
+
 ## 資産管理
 - 必要に応じて、適宜コミットをすること。commit前にlintとテストを実行してQMSを担保すること。
 
