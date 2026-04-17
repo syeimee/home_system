@@ -50,7 +50,7 @@
     top: 80px;
     right: 24px;
     z-index: 5;
-    width: 280px;
+    width: 360px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     color: rgba(255,255,255,0.7);
@@ -58,35 +58,35 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 20px;
-    padding: 20px;
+    padding: 24px;
   }
   .calendar-panel::-webkit-scrollbar { display: none; }
   .calendar-day-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.4);
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    margin-top: 20px;
   }
   .calendar-day-label:first-child { margin-top: 0; }
   .calendar-event {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 8px 0;
+    gap: 12px;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   .calendar-event:last-child { border-bottom: none; }
   .calendar-event-time {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     color: rgba(255,255,255,0.4);
-    min-width: 48px;
+    min-width: 56px;
     flex-shrink: 0;
   }
   .calendar-event-title {
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 400;
     color: rgba(255,255,255,0.7);
     line-height: 1.4;
