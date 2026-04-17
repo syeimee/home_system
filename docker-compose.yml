@@ -19,6 +19,12 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "ruby", "-e", "require 'net/http'; Net::HTTP.get(URI('http://localhost:3000/login'))"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     expose:
       - "3000"
 
@@ -57,7 +63,8 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
-      - rails
+      rails:
+        condition: service_healthy
 
 volumes:
   redis_data:
