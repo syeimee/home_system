@@ -15,12 +15,12 @@ alexa:
 
 switchbot:
   devices:
-    - id: "device-id-1"
-      name: "テープライト"
-      type: "tape_light"
-    - id: "device-id-2"
-      name: "ハブ"
-      type: "hub"
+    - id: "XXXXXXXXXXXX"
+      name: "デスクライト"
+      type: "strip_light"
+    - id: "XXXXXXXXXXXX"
+      name: "リビングのライト"
+      type: "ceiling_light_pro"
 
 interview:
   keywords:
