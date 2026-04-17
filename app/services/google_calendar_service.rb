@@ -25,7 +25,7 @@ class GoogleCalendarService
       single_events: true,
       order_by: 'startTime',
       time_min: Time.current.iso8601,
-      time_max: Time.current.end_of_day.iso8601
+      time_max: Time.current.in_time_zone.end_of_day.iso8601
     )
     response.items.map { |e| format_event(e) }
   end
