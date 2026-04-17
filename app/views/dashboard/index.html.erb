@@ -18,6 +18,9 @@
     border-radius: 10px;
     font-size: 12px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
   .logout-btn:hover { background: rgba(255,255,255,0.05); }
 
@@ -37,21 +40,29 @@
     display: flex;
     flex-direction: column;
     aspect-ratio: 1;
-    position: relative;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.15s, transform 0.1s;
+    text-decoration: none;
+    border: none;
   }
   .device-card:hover { background: #2c2c2e; }
+  .device-card:active { transform: scale(0.97); }
 
   .device-label {
     font-size: 11px;
     color: #8e8e93;
-    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    font-weight: 500;
+    margin-bottom: 0;
   }
-  .device-label .icon { font-size: 10px; }
+
+  .device-icon-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
 
   .device-icon-wrap {
     width: 64px;
@@ -60,84 +71,101 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto auto 8px 0;
   }
   .device-icon-wrap.on {
-    background: linear-gradient(135deg, #f5a623, #f7931e);
+    background: linear-gradient(135deg, #f5a623, #e8890c);
+    box-shadow: 0 4px 20px rgba(245, 166, 35, 0.35);
   }
   .device-icon-wrap.off {
     background: #2c2c2e;
   }
-  .device-icon {
-    font-size: 28px;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-  }
+  .device-icon-wrap.on svg { color: #fff; }
+  .device-icon-wrap.off svg { color: #636366; }
 
-  .device-status {
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
+  .device-bottom {
     margin-top: auto;
   }
+  .device-status {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .device-status.on { color: #fff; }
+  .device-status.off { color: #636366; }
+
   .device-name {
-    font-size: 12px;
+    font-size: 11px;
     color: #8e8e93;
-    margin-top: 2px;
   }
 
-  .device-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .device-actions form { flex: 1; display: flex; }
-  .device-actions button {
-    flex: 1;
-    padding: 8px 0;
-    border: none;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 700;
+  .toggle-form { display: contents; }
+  .toggle-form button {
+    all: unset;
+    display: contents;
     cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .device-actions button:hover { opacity: 0.8; }
-  .btn-on {
-    background: linear-gradient(135deg, #f5a623, #f7931e);
-    color: #fff;
-  }
-  .btn-off {
-    background: rgba(255,255,255,0.08);
-    color: #8e8e93;
   }
 </style>
 
 <div class="dashboard-header">
   <h1>リビング</h1>
-  <%= button_to "ログアウト", logout_path, method: :delete, class: "logout-btn" %>
+  <%= button_to logout_path, method: :delete, class: "logout-btn" do %>
+    <i data-lucide="log-out" style="width: 14px; height: 14px;"></i>
+    ログアウト
+  <% end %>
 </div>
 
 <div class="device-grid">
   <% @devices.each do |device| %>
     <% is_on = device[:power] == 'on' %>
-    <% is_light = device[:type].to_s.downcase.include?('light') %>
-    <div class="device-card">
-      <div class="device-label">
-        <span class="icon"><%= is_light ? '💡' : '⚡' %></span>
-        <%= is_light ? '照明' : 'デバイス' %>
-      </div>
+    <% toggle_path = is_on ? device_off_path(device[:id]) : device_on_path(device[:id]) %>
+    <%
+      type = device[:type].to_s.downcase
+      if type.include?('strip') || type.include?('tape')
+        category = '照明'
+        label_icon = 'lightbulb'
+        device_icon = 'sun'
+      elsif type.include?('ceiling')
+        category = '照明'
+        label_icon = 'lamp-ceiling'
+        device_icon = 'lamp-ceiling'
+      elsif type.include?('plug')
+        category = 'プラグ'
+        label_icon = 'plug'
+        device_icon = 'power'
+      elsif type.include?('curtain')
+        category = 'カーテン'
+        label_icon = 'blinds'
+        device_icon = 'blinds'
+      elsif type.include?('hub')
+        category = 'ハブ'
+        label_icon = 'router'
+        device_icon = 'router'
+      else
+        category = 'デバイス'
+        label_icon = 'power'
+        device_icon = 'power'
+      end
+    %>
+    <%= button_to toggle_path, method: :post, class: "toggle-form" do %>
+      <div class="device-card">
+        <div class="device-label">
+          <i data-lucide="<%= label_icon %>" style="width: 12px; height: 12px;"></i>
+          <%= category %>
+        </div>
 
-      <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
-        <span class="device-icon"><%= is_on ? '☀' : '☀' %></span>
-      </div>
+        <div class="device-icon-area">
+          <div class="device-icon-wrap <%= is_on ? 'on' : 'off' %>">
+            <i data-lucide="<%= device_icon %>" style="width: 30px; height: 30px;"></i>
+          </div>
+        </div>
 
-      <div class="device-status"><%= is_on ? 'ON' : 'OFF' %></div>
-      <div class="device-name"><%= device[:name] %></div>
-
-      <div class="device-actions">
-        <%= button_to "ON", device_on_path(device[:id]), method: :post, class: "btn-on" %>
-        <%= button_to "OFF", device_off_path(device[:id]), method: :post, class: "btn-off" %>
+        <div class="device-bottom">
+          <div class="device-status <%= is_on ? 'on' : 'off' %>">
+            <%= is_on ? 'ON' : 'OFF' %>
+          </div>
+          <div class="device-name"><%= device[:name] %></div>
+        </div>
       </div>
-    </div>
+    <% end %>
   <% end %>
 </div>

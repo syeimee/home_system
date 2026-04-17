@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Home System</title>
   <%= csrf_meta_tags %>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -37,5 +38,6 @@
     <% end %>
     <%= yield %>
   </div>
+  <script>lucide.createIcons();</script>
 </body>
 </html>
