@@ -19,40 +19,28 @@
     }
     .navbar {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 16px;
+      right: 16px;
       z-index: 20;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      gap: 8px;
     }
-    .navbar-brand {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.5px;
-    }
-    .navbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .navbar-btn {
-      background: rgba(255,255,255,0.1);
+    .navbar-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: none;
-      color: rgba(255,255,255,0.6);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 11px;
+      color: rgba(255,255,255,0.7);
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
     }
-    .navbar-btn:hover { background: rgba(255,255,255,0.15); }
+    .navbar-icon-btn:hover { background: rgba(0, 0, 0, 0.5); }
 
     .alert {
       position: fixed;
