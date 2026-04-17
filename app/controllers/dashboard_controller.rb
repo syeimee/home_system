@@ -31,4 +31,9 @@ class DashboardController < ApplicationController
     SwitchbotService.new.command(params[:id], 'turnOff')
     render json: { status: 'ok' }
   end
+
+  def artwork
+    artwork = MetArtService.new.current_artwork
+    render json: artwork || {}
+  end
 end

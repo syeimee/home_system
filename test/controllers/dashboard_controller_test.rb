@@ -39,6 +39,33 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'ok', response.parsed_body['status']
   end
 
+  test 'GET /dashboard/artwork redirects to login when not authenticated' do
+    get dashboard_artwork_path
+
+    assert_redirected_to login_path
+  end
+
+  test 'GET /dashboard/artwork returns artwork JSON when authenticated' do
+    login_as_allowed_user
+    artwork = { image_url: 'https://example.com/art.jpg', title: 'Test', artist: 'Artist', date: '1900' }
+    MetArtService.any_instance.stubs(:current_artwork).returns(artwork)
+    get dashboard_artwork_path
+
+    assert_response :success
+    body = response.parsed_body
+    assert_equal 'https://example.com/art.jpg', body['image_url']
+    assert_equal 'Test', body['title']
+  end
+
+  test 'GET /dashboard/artwork returns empty JSON when no artwork' do
+    login_as_allowed_user
+    MetArtService.any_instance.stubs(:current_artwork).returns(nil)
+    get dashboard_artwork_path
+
+    assert_response :success
+    assert_equal({}, response.parsed_body)
+  end
+
   private
 
   def login_as_allowed_user

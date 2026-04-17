@@ -320,6 +320,28 @@
       }
     });
 
+    // アートワーク定期更新（15分ごと）
+    var currentImageUrl = '<%= @artwork&.dig(:image_url) %>';
+    setInterval(function() {
+      fetch('/dashboard/artwork', {
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data.image_url || data.image_url === currentImageUrl) return;
+          currentImageUrl = data.image_url;
+          var bg = document.querySelector('.bg-artwork');
+          if (bg) bg.style.backgroundImage = "url('" + data.image_url + "')";
+          var titleEl = document.querySelector('.art-credit .art-title');
+          if (titleEl) titleEl.textContent = data.title || '';
+          var creditEl = document.querySelector('.art-credit .art-title + div');
+          if (creditEl) {
+            var text = data.artist || '';
+            if (data.date) text += ' (' + data.date + ')';
+            creditEl.textContent = text;
+          }
+        }).catch(function() {});
+    }, 15 * 60 * 1000);
+
     // ドロワー
     var drawer = document.getElementById('drawer');
     var handle = document.getElementById('drawerHandle');

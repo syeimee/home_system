@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'dashboard#index'
   post 'dashboard/devices/:id/on', to: 'dashboard#device_on', as: :device_on
   post 'dashboard/devices/:id/off', to: 'dashboard#device_off', as: :device_off
+  get 'dashboard/artwork', to: 'dashboard#artwork'
 
   # Webhooks
   namespace :webhooks do

@@ -6,7 +6,7 @@
 :scheduler:
   :schedule:
     met_art_refresh:
-      every: '1h'
+      every: '15m'
       class: MetArtRefreshJob
       queue: default
     interview_alert_check:
