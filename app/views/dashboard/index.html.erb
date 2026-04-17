@@ -45,6 +45,52 @@
     margin-bottom: 1px;
   }
 
+  .calendar-panel {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 5;
+    width: 280px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .calendar-panel::-webkit-scrollbar { display: none; }
+  .calendar-day-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .calendar-day-label:first-child { margin-top: 0; }
+  .calendar-event {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .calendar-event:last-child { border-bottom: none; }
+  .calendar-event-time {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    min-width: 48px;
+    flex-shrink: 0;
+  }
+  .calendar-event-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.4;
+  }
+  .calendar-event-interview .calendar-event-title {
+    color: #f5a623;
+  }
+
   .drawer {
     position: fixed;
     left: 0; right: 0; bottom: 0;
@@ -191,6 +237,38 @@
   <div class="art-credit">
     <div class="art-title"><%= @artwork[:title] %></div>
     <div><%= @artwork[:artist] %><%= " (#{@artwork[:date]})" if @artwork[:date].present? %></div>
+  </div>
+<% end %>
+
+<% if @events.present? %>
+  <div class="calendar-panel">
+    <%
+      today = Time.current.in_time_zone.to_date
+      tomorrow = today + 1
+      today_events = @events.select { |e| e[:start_time].to_date == today }
+      tomorrow_events = @events.select { |e| e[:start_time].to_date == tomorrow }
+      interview_keywords = Settings[:interview][:keywords].map(&:downcase)
+    %>
+    <% if today_events.any? %>
+      <div class="calendar-day-label">TODAY</div>
+      <% today_events.each do |event| %>
+        <% is_interview = interview_keywords.any? { |kw| event[:subject].to_s.downcase.include?(kw) } %>
+        <div class="calendar-event <%= 'calendar-event-interview' if is_interview %>">
+          <div class="calendar-event-time"><%= event[:all_day] ? '終日' : event[:start_time].strftime('%H:%M') %></div>
+          <div class="calendar-event-title"><%= event[:subject] %></div>
+        </div>
+      <% end %>
+    <% end %>
+    <% if tomorrow_events.any? %>
+      <div class="calendar-day-label">TOMORROW</div>
+      <% tomorrow_events.each do |event| %>
+        <% is_interview = interview_keywords.any? { |kw| event[:subject].to_s.downcase.include?(kw) } %>
+        <div class="calendar-event <%= 'calendar-event-interview' if is_interview %>">
+          <div class="calendar-event-time"><%= event[:all_day] ? '終日' : event[:start_time].strftime('%H:%M') %></div>
+          <div class="calendar-event-title"><%= event[:subject] %></div>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 <% end %>
 
