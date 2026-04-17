@@ -260,6 +260,8 @@
       fetch(url, {
         method: 'POST',
         headers: { 'X-CSRF-Token': csrfToken, 'Accept': 'application/json' }
+      }).then(function() {
+        card.classList.remove('loading');
       }).catch(function() {
         card.dataset.state = isOn ? 'on' : 'off';
         iconWrap.classList.remove('on', 'off');
