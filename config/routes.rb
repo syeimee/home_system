@@ -5,10 +5,6 @@ Rails.application.routes.draw do
   get 'auth/failure', to: 'sessions#failure'
   delete 'logout', to: 'sessions#destroy'
 
-  # Microsoft OAuth
-  get 'auth/microsoft', to: 'ms_auth#authorize'
-  get 'auth/microsoft/callback', to: 'ms_auth#callback'
-
   # Dashboard
   get 'dashboard', to: 'dashboard#index'
   post 'dashboard/devices/:id/on', to: 'dashboard#device_on', as: :device_on
@@ -17,7 +13,6 @@ Rails.application.routes.draw do
   # Webhooks
   namespace :webhooks do
     post 'google', to: 'google#create'
-    post 'outlook', to: 'outlook#create'
   end
 
   # Test-only route for simulating login

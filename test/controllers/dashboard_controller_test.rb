@@ -9,6 +9,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
 
   test 'GET /dashboard renders when authenticated' do
     login_as_allowed_user
+    SwitchbotService.any_instance.stubs(:devices).returns([])
     get dashboard_path
 
     assert_response :success

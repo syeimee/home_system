@@ -1,9 +1,6 @@
 <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
   <h1>Home System Dashboard</h1>
-  <div style="display: flex; gap: 8px; align-items: center;">
-    <a href="/auth/microsoft" class="btn btn-primary" style="font-size: 12px;">Microsoft 連携</a>
-    <%= button_to "ログアウト", logout_path, method: :delete, class: "btn btn-secondary" %>
-  </div>
+  <%= button_to "ログアウト", logout_path, method: :delete, class: "btn btn-secondary" %>
 </header>
 
 <h2 style="margin-bottom: 16px;">デバイス一覧</h2>
