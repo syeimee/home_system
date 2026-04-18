@@ -1,17 +1,14 @@
 app:
-  allowed_email: "your@example.com"
+  allowed_email: <%= ENV.fetch('ALLOWED_EMAIL', 'your@example.com') %>
   timezone: "Asia/Tokyo"
-  webhook_url: "https://example.duckdns.org"
+  webhook_url: <%= ENV.fetch('WEBHOOK_URL', 'https://example.duckdns.org') %>
 
 line:
-  group_id: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  group_id: <%= ENV.fetch('LINE_GROUP_ID', '') %>
 
 alexa:
   message_15: "面接が15分後に始まります。書斎付近では静かにお願いします。"
   message_5: "面接まであと5分です。静かにお願いします。"
-  devices:
-    - "living-room-echo"
-    - "bedroom-echo"
 
 switchbot: {}
 

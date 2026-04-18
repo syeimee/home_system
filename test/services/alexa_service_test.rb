@@ -5,6 +5,9 @@ class AlexaServiceTest < ActiveSupport::TestCase
     @redis = mock('redis')
     Redis.stubs(:new).returns(@redis)
     @redis.stubs(:get).with('alexa:cookie').returns('test-cookie')
+    @redis.stubs(:del)
+    @redis.stubs(:set)
+    @redis.stubs(:exists?).returns(false)
   end
 
   test 'announce fetches CSRF, devices, and sends announcement' do
