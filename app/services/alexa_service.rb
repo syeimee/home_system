@@ -42,8 +42,11 @@ class AlexaService
   end
 
   def load_cookie
-    redis.get('alexa:cookie') ||
-      raise('Alexa cookie not found. Run alexa-cookie-cli to set up.')
+    cookie = redis.get('alexa:cookie')
+    raise 'Alexa cookie not found. Run alexa-cookie-cli to set up.' unless cookie
+
+    cookie.gsub(/[\r\n]/, '')
+  end
   end
 
   def fetch_csrf(cookie)
