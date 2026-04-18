@@ -11,7 +11,7 @@ class AlexaAnnounceJob < ApplicationJob
     Rails.logger.info "[AlexaAnnounce] Announcing: #{message}"
     response = AlexaService.new.announce(message:)
     Rails.logger.info "[AlexaAnnounce] Response: #{response.code}"
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "[AlexaAnnounce] Error: #{e.class} - #{e.message}"
     raise
   end

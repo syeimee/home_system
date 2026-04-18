@@ -6,12 +6,17 @@ module Webhooks
       body = request.body.read
       return head :ok if body.blank?
 
-      parsed = JSON.parse(body) rescue {}
+      parsed = begin
+        JSON.parse(body)
+      rescue JSON::ParserError
+        {}
+      end
       events = parsed['events'] || []
 
       events.each do |event|
         source = event['source'] || {}
-        Rails.logger.info "[LINE Webhook] type=#{source['type']} groupId=#{source['groupId']} userId=#{source['userId']}"
+        Rails.logger.info "[LINE Webhook] type=#{source['type']} " \
+                          "groupId=#{source['groupId']} userId=#{source['userId']}"
       end
 
       head :ok

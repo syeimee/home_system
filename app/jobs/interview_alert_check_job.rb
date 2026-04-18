@@ -20,7 +20,7 @@ class InterviewAlertCheckJob < ApplicationJob
       schedule_alerts(event)
       mark_scheduled(event)
     end
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "[InterviewAlertCheck] Error: #{e.class} - #{e.message}"
     raise
   end

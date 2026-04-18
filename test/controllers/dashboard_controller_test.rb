@@ -54,6 +54,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     body = response.parsed_body
+
     assert_equal 'https://example.com/art.jpg', body['image_url']
     assert_equal 'Test', body['title']
   end
