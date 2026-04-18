@@ -4,8 +4,13 @@ module Webhooks
 
     def create
       event = request.body.read
-      data = JSON.parse(event)
 
+      unless valid_webhook?(event)
+        head :unauthorized
+        return
+      end
+
+      data = JSON.parse(event)
       context = data['context']
       if context
         device_id = context['deviceMac']&.delete(':')
@@ -20,6 +25,19 @@ module Webhooks
       end
 
       head :ok
+    end
+
+    private
+
+    def valid_webhook?(body)
+      secret = ENV.fetch('SWITCHBOT_WEBHOOK_SECRET', '')
+      return true if secret.blank?
+
+      token = request.headers['X-Switchbot-Signature']
+      return false unless token
+
+      expected = Base64.strict_encode64(OpenSSL::HMAC.digest('SHA256', secret, body))
+      ActiveSupport::SecurityUtils.secure_compare(expected, token)
     end
   end
 end

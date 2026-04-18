@@ -25,7 +25,7 @@ class SessionsController < ApplicationController
   end
 
   def failure
-    redirect_to login_path, alert: "認証に失敗しました: #{params[:message]}"
+    redirect_to login_path, alert: '認証に失敗しました'
   end
 
   def mock_login

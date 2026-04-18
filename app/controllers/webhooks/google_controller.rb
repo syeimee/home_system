@@ -15,7 +15,10 @@ module Webhooks
     private
 
     def valid_webhook_token?
-      request.headers['X-Goog-Channel-Token'] == ENV.fetch('GOOGLE_WEBHOOK_SECRET')
+      ActiveSupport::SecurityUtils.secure_compare(
+        request.headers['X-Goog-Channel-Token'].to_s,
+        ENV.fetch('GOOGLE_WEBHOOK_SECRET')
+      )
     end
   end
 end

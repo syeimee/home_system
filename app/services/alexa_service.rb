@@ -42,10 +42,20 @@ class AlexaService
   end
 
   def load_cookie
-    cookie = redis.get('alexa:cookie')
-    raise 'Alexa cookie not found. Run alexa-cookie-cli to set up.' unless cookie
+    raw = redis.get('alexa:cookie')
+    raise 'Alexa cookie not found. Run alexa-cookie-cli to set up.' unless raw
 
+    cookie = begin
+      encryptor.decrypt_and_verify(raw)
+    rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageEncryptor::InvalidMessage
+      raw
+    end
     cookie.gsub(/[\r\n]/, '')
+  end
+
+  def encryptor
+    key = ActiveSupport::KeyGenerator.new(ENV.fetch('SECRET_KEY_BASE')).generate_key('alexa_cookie', 32)
+    ActiveSupport::MessageEncryptor.new(key)
   end
 
   def fetch_csrf(cookie)

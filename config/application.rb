@@ -15,5 +15,6 @@ module HomeSystem
 
     config.time_zone = 'Asia/Tokyo'
     config.active_job.queue_adapter = :sidekiq
+    config.filter_parameters += %i[password token secret cookie csrf key signature]
   end
 end
