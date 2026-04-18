@@ -4,6 +4,7 @@ class DashboardController < ApplicationController
   def index
     @artwork = MetArtService.new.current_artwork
     @events = fetch_events
+    @alexa_cookie_expired = AlexaService.cookie_expired?
     service = SwitchbotService.new
     @devices = service.devices.map do |device|
       status = service.device_status(device['deviceId'])

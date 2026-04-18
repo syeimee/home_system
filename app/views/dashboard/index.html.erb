@@ -216,11 +216,77 @@
 
   .calendar-panel.hidden { display: none; }
 
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+  }
+  .modal-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .modal-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .modal-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    margin: 0 6px;
+  }
+  .modal-btn-primary {
+    background: linear-gradient(135deg, #f5a623, #e8890c);
+    color: #fff;
+  }
+  .modal-btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+  }
+
   .device-card.loading {
     opacity: 0.5;
     pointer-events: none;
   }
 </style>
+
+<% if @alexa_cookie_expired %>
+  <div class="modal-overlay" id="alexaModal">
+    <div class="modal">
+      <div class="modal-icon"><i data-lucide="alert-triangle" style="width: 48px; height: 48px; color: #f5a623;"></i></div>
+      <div class="modal-title">Alexa Cookie の再認証が必要です</div>
+      <div class="modal-desc">Alexa への接続が切れました。<br>再認証してください。</div>
+      <a href="http://127.0.0.1:8080/" target="_blank" class="modal-btn modal-btn-primary">認証画面を開く</a>
+      <button class="modal-btn modal-btn-secondary" onclick="document.getElementById('alexaModal').classList.add('hidden')">閉じる</button>
+    </div>
+  </div>
+<% end %>
 
 <% content_for :navbar do %>
   <nav class="navbar">

@@ -1,6 +1,8 @@
 class AlexaService
   BASE_URL = 'https://alexa.amazon.co.jp'.freeze
 
+  COOKIE_EXPIRED_KEY = 'alexa:cookie_expired'.freeze
+
   def announce(message:)
     cookie = load_cookie
     csrf = fetch_csrf(cookie)
@@ -9,7 +11,7 @@ class AlexaService
 
     sequence = build_announcement_sequence(message, devices)
 
-    HTTParty.post(
+    response = HTTParty.post(
       "#{BASE_URL}/api/behaviors/preview",
       headers: {
         'Content-Type' => 'application/json; charset=UTF-8',
@@ -18,12 +20,29 @@ class AlexaService
       },
       body: { behaviorId: 'PREVIEW', sequenceJson: sequence.to_json }.to_json
     )
+
+    if response.code == 401
+      redis.set(COOKIE_EXPIRED_KEY, '1')
+      Rails.logger.error '[AlexaService] Cookie expired (401)'
+    else
+      redis.del(COOKIE_EXPIRED_KEY)
+    end
+
+    response
+  end
+
+  def self.cookie_expired?
+    Redis.new(url: ENV.fetch('REDIS_URL')).exists?(COOKIE_EXPIRED_KEY)
   end
 
   private
 
+  def redis
+    @redis ||= Redis.new(url: ENV.fetch('REDIS_URL'))
+  end
+
   def load_cookie
-    Redis.new(url: ENV.fetch('REDIS_URL')).get('alexa:cookie') ||
+    redis.get('alexa:cookie') ||
       raise('Alexa cookie not found. Run alexa-cookie-cli to set up.')
   end
 
