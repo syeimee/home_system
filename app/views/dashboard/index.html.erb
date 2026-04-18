@@ -48,9 +48,9 @@
   .calendar-panel {
     position: fixed;
     top: 80px;
-    right: 24px;
+    right: 80px;
     z-index: 5;
-    width: 360px;
+    width: 420px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     color: rgba(255,255,255,0.7);
@@ -58,11 +58,11 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 20px;
-    padding: 24px;
+    padding: 28px;
   }
   .calendar-panel::-webkit-scrollbar { display: none; }
   .calendar-day-label {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     color: rgba(255,255,255,0.5);
     letter-spacing: 2px;
@@ -79,14 +79,14 @@
   }
   .calendar-event:last-child { border-bottom: none; }
   .calendar-event-time {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 500;
     color: rgba(255,255,255,0.4);
-    min-width: 56px;
+    min-width: 64px;
     flex-shrink: 0;
   }
   .calendar-event-title {
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 400;
     color: rgba(255,255,255,0.7);
     line-height: 1.4;
