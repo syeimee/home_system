@@ -47,7 +47,6 @@ class AlexaService
 
     cookie.gsub(/[\r\n]/, '')
   end
-  end
 
   def fetch_csrf(cookie)
     response = HTTParty.get(
