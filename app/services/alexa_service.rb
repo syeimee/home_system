@@ -4,7 +4,8 @@ class AlexaService
   def announce(message:)
     cookie = load_cookie
     csrf = fetch_csrf(cookie)
-    devices = target_devices(cookie)
+    cookie_with_csrf = "#{cookie}; csrf=#{csrf}"
+    devices = target_devices(cookie_with_csrf)
 
     sequence = build_announcement_sequence(message, devices)
 
@@ -13,7 +14,7 @@ class AlexaService
       headers: {
         'Content-Type' => 'application/json; charset=UTF-8',
         'csrf' => csrf,
-        'Cookie' => cookie
+        'Cookie' => cookie_with_csrf
       },
       body: { behaviorId: 'PREVIEW', sequenceJson: sequence.to_json }.to_json
     )
