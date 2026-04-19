@@ -41,4 +41,9 @@ docker-compose.override.yml
 
 # Redis dump
 dump.rdb
-docs/*
+
+# Project-specific internal docs
+CLAUDE.md
+docs/claude-cli-briefing.md
+docs/task.md
+docs/image.png
