@@ -44,6 +44,4 @@ dump.rdb
 
 # Project-specific internal docs
 CLAUDE.md
-docs/claude-cli-briefing.md
-docs/task.md
-docs/image.png
+docs/
