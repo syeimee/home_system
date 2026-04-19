@@ -46,8 +46,6 @@ services:
       - "80:80"
       - "443:443"
     env_file: .env
-    environment:
-      DOMAIN: ${DOMAIN:-localhost}
     volumes:
       - ./nginx/conf.d/home-system.conf.template:/etc/nginx/templates/default.conf.template:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
