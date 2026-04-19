@@ -49,8 +49,7 @@ services:
     volumes:
       - ./nginx/conf.d/home-system.conf.tpl:/tmp/nginx.conf.tpl:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-    command: >
-      sh -c "sed 's/$${DOMAIN}/'$$DOMAIN'/g' /tmp/nginx.conf.tpl > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    command: ["/bin/sh", "-c", "envsubst '$$DOMAIN' < /tmp/nginx.conf.tpl > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
     depends_on:
       rails:
         condition: service_healthy
