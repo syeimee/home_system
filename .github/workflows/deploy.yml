@@ -34,6 +34,8 @@ jobs:
             LINE_GROUP_ID=${{ secrets.LINE_GROUP_ID }}
             SWITCHBOT_TOKEN=${{ secrets.SWITCHBOT_TOKEN }}
             SWITCHBOT_SECRET=${{ secrets.SWITCHBOT_SECRET }}
+            LINE_CHANNEL_SECRET=${{ secrets.LINE_CHANNEL_SECRET }}
+            DOMAIN=${{ secrets.DOMAIN }}
             REDIS_URL=redis://redis:6379
             EOF
 
