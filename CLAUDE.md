@@ -69,6 +69,48 @@ Settings[:switchbot][:devices]
 - DBを導入しない（Redisのみ使用）
 - 秘密情報をコードにハードコードしない
 
+---
+
+## パブリックリポジトリ注意事項（最重要）
+
+**このリポジトリはパブリック公開されている。以下を厳守すること。**
+
+### コミット前チェック（必須）
+コミット・プッシュ前に必ず以下を確認する:
+
+1. **個人情報の混入チェック** — コード・コミットメッセージに以下が含まれていないこと:
+   - 実際のメールアドレス（`@gmail.com`等）
+   - 実際のIPアドレス
+   - 実際のドメイン名（DuckDNS等）
+   - デバイスのMAC/シリアル番号
+   - APIトークン・シークレットの実値
+
+2. **`.env`が絶対にステージングされていないこと** — `git status` で確認
+
+3. **`settings.yml` に個人情報がないこと** — 全て`ENV.fetch`経由であること
+
+### 新しいWebhookエンドポイントを追加する場合
+- 必ず署名検証を実装する（`ActiveSupport::SecurityUtils.secure_compare`を使用）
+- `skip_forgery_protection`する場合は代替の認証を必ず実装
+
+### 新しいRedisキーにトークン/Cookieを保存する場合
+- 必ず`ActiveSupport::MessageEncryptor`で暗号化する
+
+### 新しい外部スクリプト（CDN）を追加する場合
+- バージョンを固定する（`@latest`禁止）
+
+### NG例
+```ruby
+# NG: ハードコード
+allowed_email = "user@gmail.com"
+webhook_url = "https://my-domain.duckdns.org"
+device_id = "AB12CD34EF56"
+
+# OK: 環境変数経由
+allowed_email = ENV.fetch('ALLOWED_EMAIL')
+webhook_url = ENV.fetch('WEBHOOK_URL')
+```
+
 ## テスト・Lint 実行方法
 
 Redisが必要なため Docker 経由で実行する。
