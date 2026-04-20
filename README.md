@@ -144,8 +144,6 @@ sequenceDiagram
 | コンテナ | Docker / Docker Compose |
 | リバースプロキシ | Nginx |
 | CI/CD | GitHub Actions |
-| インフラ | OCI Always Free (AMD 1コア / 1GB) |
-| ドメイン | DuckDNS |
 | SSL | Let's Encrypt |
 
 ## セキュリティ
@@ -164,14 +162,13 @@ sequenceDiagram
 ### 前提条件
 
 - Docker / Docker Compose
-- DuckDNS ドメイン
 - Let's Encrypt SSL 証明書
 
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/syeimee/home-system.git
-cd home-system
+git clone https://github.com/syeimee/home_system.git
+cd home_system
 ```
 
 ### 2. 環境変数の設定
@@ -189,7 +186,7 @@ docker compose up -d --build
 
 ### 4. 初回ログイン
 
-`https://your-domain.duckdns.org/` にアクセスし、Google アカウントでログイン。
+`https://your-domain.com` にアクセスし、Google アカウントでログイン。
 
 ### 外部サービスの設定
 
