@@ -22,11 +22,15 @@ class LineService
   private
 
   def format_message(event)
-    start_time = event[:start_time].strftime('%Y/%m/%d %H:%M')
+    time_str = if event[:all_day]
+                 event[:start_time].strftime('%Y/%m/%d') + ' 終日'
+               else
+                 event[:start_time].strftime('%Y/%m/%d %H:%M')
+               end
     <<~MSG.strip
       📅 予定が追加されました
       タイトル: #{event[:subject]}
-      日時: #{start_time}
+      日時: #{time_str}
     MSG
   end
 end

@@ -55,13 +55,15 @@ class GoogleCalendarService
   end
 
   def format_event(event)
-    start_time = event.start.date_time || DateTime.parse(event.start.date)
-    end_time = event.end&.date_time || event.end&.date
+    all_day = event.start.date_time.nil?
+    start_time = event.start.date_time || Date.parse(event.start.date.to_s)
+    end_time = event.end&.date_time || (event.end&.date && Date.parse(event.end.date.to_s))
     {
       id: event.id,
       subject: event.summary,
-      start_time: start_time.to_time.in_time_zone,
-      end_time: end_time&.to_time&.in_time_zone
+      start_time: all_day ? start_time : start_time.to_time.in_time_zone,
+      end_time: all_day ? end_time : end_time&.to_time&.in_time_zone,
+      all_day: all_day
     }
   end
 end
