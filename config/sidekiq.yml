@@ -13,3 +13,7 @@
       every: '15m'
       class: InterviewAlertCheckJob
       queue: default
+    google_calendar_line_notify:
+      every: '5m'
+      class: GoogleCalendarLineNotifyJob
+      queue: webhooks

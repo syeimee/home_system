@@ -1,8 +1,13 @@
 require 'test_helper'
 
 class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
+  setup do
+    redis = Redis.new(url: ENV.fetch('REDIS_URL', 'redis://localhost:6379'))
+    redis.del('line_notified_events')
+  end
+
   test 'perform fetches events and sends LINE notifications' do
-    events = [{ subject: '予定A', start_time: Time.zone.now }]
+    events = [{ id: 'event_1', subject: '予定A', start_time: Time.zone.now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -17,7 +22,7 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
 
   test 'perform schedules Alexa alerts for interview events' do
     start_time = 30.minutes.from_now
-    events = [{ subject: 'Technical Interview', start_time: start_time }]
+    events = [{ id: 'event_interview', subject: 'Technical Interview', start_time: start_time }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -35,7 +40,7 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
   end
 
   test 'perform does not schedule Alexa alerts for non-interview events' do
-    events = [{ subject: '定例ミーティング', start_time: 30.minutes.from_now }]
+    events = [{ id: 'event_meeting', subject: '定例ミーティング', start_time: 30.minutes.from_now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -52,7 +57,7 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
 
   test 'perform skips past alert times' do
     start_time = 3.minutes.from_now
-    events = [{ subject: '面接', start_time: start_time }]
+    events = [{ id: 'event_soon', subject: '面接', start_time: start_time }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
