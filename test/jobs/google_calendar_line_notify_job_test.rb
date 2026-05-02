@@ -7,7 +7,8 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
   end
 
   test 'perform fetches events and sends LINE notifications' do
-    events = [{ id: 'event_1', subject: '予定A', start_time: Time.zone.now }]
+    now = Time.zone.now
+    events = [{ id: 'event_1', subject: '予定A', start_time: now, updated: now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -20,9 +21,30 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
     GoogleCalendarLineNotifyJob.perform_now
   end
 
+  test 'perform notifies again when event is updated' do
+    now = Time.zone.now
+    original_event = { id: 'event_1', subject: '予定A', start_time: now, updated: now }
+    updated_event = { id: 'event_1', subject: '予定A（変更）', start_time: now, updated: now + 5.minutes }
+
+    mock_calendar = mock('google_calendar_service')
+    mock_line = mock('line_service')
+
+    # First notification
+    mock_calendar.stubs(:recent_events).returns([original_event])
+    GoogleCalendarService.stubs(:new).returns(mock_calendar)
+    mock_line.expects(:notify_event).with(original_event).once
+    LineService.stubs(:new).returns(mock_line)
+    GoogleCalendarLineNotifyJob.perform_now
+
+    # Second notification after update
+    mock_calendar.stubs(:recent_events).returns([updated_event])
+    mock_line.expects(:notify_event).with(updated_event).once
+    GoogleCalendarLineNotifyJob.perform_now
+  end
+
   test 'perform schedules Alexa alerts for interview events' do
     start_time = 30.minutes.from_now
-    events = [{ id: 'event_interview', subject: 'Technical Interview', start_time: start_time }]
+    events = [{ id: 'event_interview', subject: 'Technical Interview', start_time: start_time, updated: Time.zone.now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -40,7 +62,7 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
   end
 
   test 'perform does not schedule Alexa alerts for non-interview events' do
-    events = [{ id: 'event_meeting', subject: '定例ミーティング', start_time: 30.minutes.from_now }]
+    events = [{ id: 'event_meeting', subject: '定例ミーティング', start_time: 30.minutes.from_now, updated: Time.zone.now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)
@@ -57,7 +79,7 @@ class GoogleCalendarLineNotifyJobTest < ActiveSupport::TestCase
 
   test 'perform skips past alert times' do
     start_time = 3.minutes.from_now
-    events = [{ id: 'event_soon', subject: '面接', start_time: start_time }]
+    events = [{ id: 'event_soon', subject: '面接', start_time: start_time, updated: Time.zone.now }]
 
     mock_calendar = mock('google_calendar_service')
     mock_calendar.stubs(:recent_events).returns(events)

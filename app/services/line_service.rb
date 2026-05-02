@@ -27,8 +27,9 @@ class LineService
                else
                  event[:start_time].strftime('%Y/%m/%d %H:%M')
                end
+    action = event[:is_update] ? '変更' : '追加'
     <<~MSG.strip
-      📅 予定が追加されました
+      📅 予定が#{action}されました
       タイトル: #{event[:subject]}
       日時: #{time_str}
     MSG

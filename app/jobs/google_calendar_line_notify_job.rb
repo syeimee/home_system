@@ -8,22 +8,28 @@ class GoogleCalendarLineNotifyJob < ApplicationJob
     return if events.empty?
 
     events.each do |event|
-      next if already_notified?(event[:id])
+      notification_key = build_notification_key(event)
+      next if already_notified?(notification_key)
 
       LineService.new.notify_event(event)
-      mark_notified(event[:id])
+      mark_notified(notification_key)
       schedule_interview_alerts(event) if interview_event?(event)
     end
   end
 
   private
 
-  def already_notified?(event_id)
-    redis.sismember(NOTIFIED_KEY, event_id)
+  def build_notification_key(event)
+    updated_at = event[:updated]&.to_i || 0
+    "#{event[:id]}:#{updated_at}"
   end
 
-  def mark_notified(event_id)
-    redis.sadd(NOTIFIED_KEY, event_id)
+  def already_notified?(key)
+    redis.sismember(NOTIFIED_KEY, key)
+  end
+
+  def mark_notified(key)
+    redis.sadd(NOTIFIED_KEY, key)
     redis.expire(NOTIFIED_KEY, 24.hours.to_i)
   end
 
